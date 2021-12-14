@@ -90,9 +90,10 @@ std::map<std::string, std::vector<int16_t> > name_id_maping = {{ "bl", {0,1,2}  
       this->current_state.legs[leg].vel[motor_index]=this->goal_state.legs[leg].vel[motor_index];
       this->current_state.legs[leg].pos[motor_index]=
       this-> next_step(this->goal_state.legs[leg].pos[motor_index],this->current_state.legs[leg].pos[motor_index],this->current_state.legs[leg].vel[motor_index]);
+      this->pca9685->setPWM(current_id[motor_index], 0,this->current_state.legs[leg].pos[motor_index]);
+
       std::cout << this->current_state.legs[leg].pos[motor_index]<<"\t";
     }
-      pca9685->setPWM(current_id[motor_index], 0,this->current_state.legs[leg].pos[motor_index]);
     }
     std::cout << std::endl;
 
