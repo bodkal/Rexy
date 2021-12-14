@@ -52,7 +52,6 @@ private:
   PCA9685 *pca9685 = new PCA9685();
 
 
-  //int16_t goal_state[12]={90, 30, 60, 90, 30, 60, 90, 30, 60, 90, 30, 60};
   int16_t min_pwm_val[12]={180,120,610,620,140,620,90,610,140,550,600,130};
   int16_t max_pwm_val[12]={540,610,110,250,635,110,475,125,630,170,100,640};
 
@@ -78,35 +77,46 @@ std::map<std::string, std::vector<int16_t> > name_id_maping = {{ "bl", {0,1,2}  
   }
   return current;
   }
+
+
   void publish_state()
   {
-        std::cout << 83 << std::endl;
 
     for(int leg = 0;leg < 4;leg++){
-    printf("step = %lf,%lf \t",this->goal_state.legs[leg].vel[0],this->current_state.legs[leg].pos[0]);
 
-      std::vector<short> current_id =  this->name_id_maping[this->current_state.legs[leg].name];
-      
+    std::vector<short> current_id =  this->name_id_maping[this->current_state.legs[leg].name];
 
     for (int motor_index = 0;motor_index < 4;motor_index++){
       this->current_state.legs[leg].vel[motor_index]=this->goal_state.legs[leg].vel[motor_index];
       this->current_state.legs[leg].pos[motor_index]=
       this-> next_step(this->goal_state.legs[leg].pos[motor_index],this->current_state.legs[leg].pos[motor_index],this->current_state.legs[leg].vel[motor_index]);
-      //printf("%0.2lf \t",this->current_state.legs[leg].pos[motor_index]);
+      std::cout << this->current_state.legs[leg].pos[motor_index]<<"\t"<<std::end;
     }
-      //pca9685->setPWM(current_id[motor_index], 0,this->current_state.legs[leg].pos[motor_index]);
-
+     // pca9685->setPWM(current_id[motor_index], 0,this->current_state.legs[leg].pos[motor_index]);
     }
-        printf("\n");
-
-    //printf("\n");
-        std::cout << 103 << std::endl;
+    std::cout << std::endl;
 
     this->publisher->publish(this->current_state);
 
   }
 
 
+  rexy_msg::msg::LegList home(){
+
+    float home_state[12]={90.0, 30.0, 60.0, 90.0, 30.0, 60.0, 90.0, 30.0, 60.0, 90.0, 30.0, 60.0};
+    rexy_msg::msg::LegList tmp;
+    rexy_msg::msg::Leg x;
+
+    for(auto const& val: name_id_maping)
+    {
+      x.name=val.first;
+      x.pos={home_state[val.second[0]],home_state[val.second[1]],home_state[val.second[2]]};
+      x.vel={1.0,1.0,1.0};
+      tmp.legs.push_back(x);
+    }
+    return tmp;
+
+  }
   void goal_state_callback(const rexy_msg::msg::LegList::SharedPtr msg)
   {
       for (int i =0; i<4;i++){
@@ -142,30 +152,14 @@ std::map<std::string, std::vector<int16_t> > name_id_maping = {{ "bl", {0,1,2}  
   }
 
 public:
-
+ 
   MotorControl() : Node("motor_control")
   {
-    rexy_msg::msg::Leg x;
-
-    for(auto const& val: name_id_maping)
-    {
-      x.name=val.first;
-      x.pos={0,0,0};
-      x.vel={0,0,0};
-
-      goal_state.legs.push_back(x);
-      current_state.legs.push_back(x);
-    }
-      for(auto const& x: goal_state.legs){
-        std::cout << x.name << std::endl;
-        }
-
-        std::cout << 158 << std::endl;
+    this->goal_state=this->home();
+    this->current_state=this->home();
 
     this->publisher = this->create_publisher<rexy_msg::msg::LegList>("cuurent_state", 10);
     this->subscription = this->create_subscription<rexy_msg::msg::LegList>("goal_state", 10, std::bind(&MotorControl::goal_state_callback, this, _1));
-
-            std::cout << 163 << std::endl;
 
 /*
     int err = pca9685->openPCA9685();
