@@ -38,7 +38,9 @@ class MinimalPublisher(Node):
         all_leg=[]
         names=["br","fr","fl","bl"]
         motors_id=range(12)
-        motors_pos=[90.0, 35.0, 60.0, 90.0, 30.0, 60.0, 90.0, 30.0, 60.0, 90.0, 35.0, 60.0]
+        motors_pos=[90.0, 30.0, 60.0, 90.0, 30.0, 60.0, 90.0, 30.0, 60.0, 90.0, 30.0, 60.0]
+        #motors_pos=[0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
+
         motors_vel=[0.5,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0]
 
         for i in range(4):
@@ -60,14 +62,16 @@ class MinimalPublisher(Node):
         x=float(input("input pwm : "))
         print(x)
 
-        y=float(input("input id : "))
+        y=int(input("motor id : "))
+        z=int(input("leg id : "))
+
         #print(f"{y}\t{x}")
         #for i in [1,4,8,7,10]:
         #    self.msg.data[i]+=x
         #for i in [2,5,8,11]:
         #    self.msg.data[i]+=2*x
-        self.msg.legs[0].pos[0]=self.msg.legs[0].pos[0]+x
-        self.msg.legs[0].vel[0]=y
+        self.msg.legs[z].pos[y]=x
+        self.msg.legs[z].vel[y]=1.0
 
         print(self.msg)
 
