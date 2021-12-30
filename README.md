@@ -1,4 +1,6 @@
 # rexy 
-for micro ros:\n
-https://micro.ros.org/\n
-https://micro.ros.org/docs/tutorials/core/teensy_with_arduino/\n
+for micro ros install:
+
+https://micro.ros.org/
+
+https://micro.ros.org/docs/tutorials/core/teensy_with_arduino/
