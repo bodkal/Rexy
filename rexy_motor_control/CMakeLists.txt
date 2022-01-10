@@ -28,14 +28,15 @@ find_package(std_msgs REQUIRED)
 find_package(rexy_msg REQUIRED)
 
 
-add_executable(motor_control src/motor_control.cpp  include/JHPWMDriver/src/JHPWMPCA9685.cpp)
+add_executable(motor_control src/motor_control_cal.cpp   include/JHPWMDriver/src/JHPWMPCA9685.cpp)
+
 ament_target_dependencies(motor_control rclcpp  rclpy std_msgs rexy_msg)
 target_link_libraries(motor_control ${catkin_LIBRARIES} i2c)
 
-
-      
+ 
 install(TARGETS
   motor_control
+  
   DESTINATION lib/${PROJECT_NAME})
 
 
