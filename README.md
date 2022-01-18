@@ -1,5 +1,5 @@
 # rexy 
-** open sorch **
+**open sorch**
 
 https://github.com/mike4192/spotMicro
 
