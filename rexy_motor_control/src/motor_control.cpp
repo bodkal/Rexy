@@ -11,33 +11,12 @@
 #include <map>
 #include <JHPWMDriver/src/JHPWMPCA9685.h>
 #include <vector>
-
+#include "yaml-cpp/yaml.h"
 using std::placeholders::_1;
 
 using namespace std::chrono_literals;
 
 
-/*
- loc | motor  |   min     |   max
-     |        |deg  pwm   | deg   pwm
--------------------------------------
-     |  11    | 0  = 240  | 196 = 610 
- bl  |  10    | 0  = 600  | 180 = 100 
-     |  9     | 35 = 500  | 155 = 220
--------------------------------------
-     |  8     | 0  = 140  | 180 = 630
- fl  |  7     | 0  = 610  | 180 = 125
-     |  6     | 37 = 220  | 150 = 510
--------------------------------------
-     |  5     | 0  = 610  | 212 = 210
- fr  |  4     | 0  = 180  | 177 = 515
-     |  3     | 33 = 500  | 155 = 220
--------------------------------------
-     |  2     | 0  = 620  | 201 = 240
- br  |  1     | 0  = 180  | 177 = 515
-     |  0     | 35 = 200  | 155 = 480 
--------------------------------------
-*/
 
 
 class MotorControl : public rclcpp::Node
@@ -78,6 +57,26 @@ std::map<std::string, std::vector<int16_t> > name_id_maping = {{ "bl", {0,1,2}  
   return current;
   }
 
+  void read_config(){
+    
+    YAML::Node config = YAML::LoadFile("/home/koby/rexy_ws/src/rexy_motor_control/config/rexy_motor_config.yaml");
+                   std::cout <<"read configuriton files ... "<<std::endl;
+
+                // loop over the positions Rectangle and print them:
+              std::map<std::string, std::vector<int16_t> > name_id_maping = config["name_id_maping"].as<std::map<std::string, std::vector<int16_t> >>();
+              
+              std::vector<int16_t> min_pwm_val = config["map_angel_pwm"]["min_pwm_val"].as<std::vector<int16_t>>();
+              std::vector<int16_t> max_pwm_val = config["map_angel_pwm"]["max_pwm_val"].as<std::vector<int16_t>>();
+              std::vector<int16_t> min_angle_val = config["map_angel_pwm"]["min_angle_val"].as<std::vector<int16_t>>();
+              std::vector<int16_t> max_angle_val = config["map_angel_pwm"]["max_angle_val"].as<std::vector<int16_t>>();
+              
+               std::cout << name_id_maping["br"][2]<<std::endl;
+               std::cout << min_pwm_val[0]<<std::endl;
+               std::cout << max_pwm_val[0]<<std::endl;
+               std::cout << min_angle_val[0]<<std::endl;
+               std::cout << max_angle_val[0]<<std::endl;
+  }
+
 
   void publish_state()
   {
@@ -90,7 +89,6 @@ std::map<std::string, std::vector<int16_t> > name_id_maping = {{ "bl", {0,1,2}  
       this->current_state.legs[leg].vel[motor_index]=this->goal_state.legs[leg].vel[motor_index];
       this->current_state.legs[leg].pos[motor_index]=
       this-> next_step(this->goal_state.legs[leg].pos[motor_index],this->current_state.legs[leg].pos[motor_index],this->current_state.legs[leg].vel[motor_index]);
-      
       this->pca9685->setPWM(current_id[motor_index], 0,this->current_state.legs[leg].pos[motor_index]);
 
       std::cout << this->current_state.legs[leg].pos[motor_index]<<"\t";
@@ -153,6 +151,7 @@ std::map<std::string, std::vector<int16_t> > name_id_maping = {{ "bl", {0,1,2}  
     pca9685->closePCA9685();
   }
 
+
 public:
  
   MotorControl() : Node("motor_control")
@@ -162,11 +161,12 @@ public:
 
     this->publisher = this->create_publisher<rexy_msg::msg::LegList>("cuurent_state", 10);
     this->subscription = this->create_subscription<rexy_msg::msg::LegList>("goal_state", 10, std::bind(&MotorControl::goal_state_callback, this, _1));
-
-
+    this->read_config();
+    
+    /*
     int err = pca9685->openPCA9685();
     printf("%d\n", err);
-
+    
     if (err < 0)
     {
       printf("Error: %d", pca9685->error);
@@ -178,8 +178,8 @@ public:
       pca9685->reset();
       pca9685->setPWMFrequency(60);
     }
-
     this->timer_ = this->create_wall_timer(40ms, std::bind(&MotorControl::publish_state, this));
+    */
   }
 };
 
