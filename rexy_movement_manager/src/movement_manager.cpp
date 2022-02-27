@@ -42,7 +42,7 @@ private:
   void read_config()
   {
 
-    YAML::Node config = YAML::LoadFile("/home/koby/rexy_ws/src/rexy_movement_manager/config/rexy_motor_config.yaml");
+    YAML::Node config = YAML::LoadFile("/home/rexy/rexy_ws/src/rexy_movement_manager/config/rexy_motor_config.yaml");
 
     std::cout << "read configuriton files ... " << std::endl;
     name_id_maping = config["name_id_maping"].as<std::map<std::string, std::vector<int16_t>>>();

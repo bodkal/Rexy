@@ -6,8 +6,8 @@ using namespace std::chrono_literals;
 void Kinematics::read_config(){
     
     this->l1 = 60;
-    this->l2 = 115;
-    this->l3 = 130;
+    this->l2 = 105;
+    this->l3 = 135;
     
     /*
     YAML::Node config = YAML::LoadFile("/home/koby/rexy_ws/src/rexy_motor_control/config/rexy_motor_config.yaml");
@@ -47,12 +47,14 @@ rexy_msg::msg::Leg Kinematics::leg_ik(float x,float y,float z,std::string leg_na
     float D = (pow(H,2)+pow(x,2) - pow(l2,2)-pow(l3,2))/(2*l2*l3);
     float theta3 = -atan2(sqrt(1-pow(D,2)),D);
 
-    float theta2 = atan2(x, H) - atan2(l3*sin(theta3), l2 + l3*cos(theta3));  
+    float theta2 = atan2(x, H) - atan2(l3*sin(theta3), l2 + l3*cos(theta3));
+  
     /*
     std::cout<<"t1 : "<<90-this->rad_2_deg(theta1)<<std::endl;
     std::cout<<"t2 : "<<this->rad_2_deg(theta2)<<std::endl;
     std::cout<<"t3 : "<<140+this->rad_2_deg(theta3)<<std::endl;
     */
+
     rexy_msg::msg::Leg leg;
     leg.name=leg_name;
     leg.pos={ 90-this->rad_2_deg(theta1),

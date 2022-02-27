@@ -35,8 +35,6 @@ private:
   std::vector<int16_t> max_pwm_val ;
   std::vector<int16_t> min_angle_val;
   std::vector<int16_t> max_angle_val;
-  std::vector<float> home_state;
-
   std::map<std::string, std::vector<int16_t> > name_id_maping;
 
   float next_step(float goal, float current,float step){
@@ -63,7 +61,7 @@ private:
               max_pwm_val = config["map_angel_pwm"]["max_pwm_val"].as<std::vector<int16_t>>();
               min_angle_val = config["map_angel_pwm"]["min_angle_val"].as<std::vector<int16_t>>();
               max_angle_val = config["map_angel_pwm"]["max_angle_val"].as<std::vector<int16_t>>();
-              home_state = config["home"]["pos"].as<std::vector<float>>();
+              
   }
 
 
@@ -104,7 +102,7 @@ private:
 
   rexy_msg::msg::LegList home(){
 
-   // float home_state[3]={90.0, 90.0, 90.0};//, 90.0, 30.0, 60.0, 90.0, 30.0, 60.0, 90.0, 30.0, 60.0};
+    float home_state[3]={90.0, 30.0, 60.0};//, 90.0, 30.0, 60.0, 90.0, 30.0, 60.0, 90.0, 30.0, 60.0};
     rexy_msg::msg::LegList tmp;
     rexy_msg::msg::Leg x;
 
@@ -116,7 +114,7 @@ private:
       tmp.legs.push_back(x);
     }
     return tmp;
-
+0
   }
   void goal_state_callback(const rexy_msg::msg::LegList::SharedPtr msg)
   {
