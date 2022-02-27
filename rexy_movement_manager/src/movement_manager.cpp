@@ -23,10 +23,14 @@ int main(int argc, char ** argv)
   
   rclcpp::init(argc, argv);
   Kinematics a;
-   auto x= a.leg_ik(0,0,195,"br");
+   for(int i = 195; i > 150 ; i-=5){
+   auto x= a.leg_ik(0,60,i,"br");
    for(auto const& val: x.pos){
-    std::cout<<val<<"\t"<<std::endl;
+    std::cout<<val<<"\t";
     }
+    std::cout<<std::endl;
+   }
+
   
   
  // rclcpp::spin(std::make_shared<MotorControl>());

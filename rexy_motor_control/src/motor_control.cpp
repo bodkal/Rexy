@@ -103,14 +103,14 @@ std::map<std::string, std::vector<int16_t> > name_id_maping = {{ "bl", {0,1,2}  
 
   rexy_msg::msg::LegList home(){
 
-    float home_state[12]={90.0, 30.0, 60.0, 90.0, 30.0, 60.0, 90.0, 30.0, 60.0, 90.0, 30.0, 60.0};
+    float home_state[3]={90.0, 30.0, 60.0};//, 90.0, 30.0, 60.0, 90.0, 30.0, 60.0, 90.0, 30.0, 60.0};
     rexy_msg::msg::LegList tmp;
     rexy_msg::msg::Leg x;
 
     for(auto const& val: name_id_maping)
     {
       x.name=val.first;
-      x.pos={home_state[val.second[0]],home_state[val.second[1]],home_state[val.second[2]]};
+      x.pos=home_state;//{home_state[val.second[0]],home_state[val.second[1]],home_state[val.second[2]]};
       x.vel={1.0,1.0,1.0};
       tmp.legs.push_back(x);
     }
@@ -163,7 +163,7 @@ public:
     this->subscription = this->create_subscription<rexy_msg::msg::LegList>("goal_state", 10, std::bind(&MotorControl::goal_state_callback, this, _1));
     this->read_config();
     
-    /*
+    
     int err = pca9685->openPCA9685();
     printf("%d\n", err);
     
@@ -179,7 +179,7 @@ public:
       pca9685->setPWMFrequency(60);
     }
     this->timer_ = this->create_wall_timer(40ms, std::bind(&MotorControl::publish_state, this));
-    */
+    
   }
 };
 
