@@ -164,14 +164,7 @@ public:
 
     this->publisher = this->create_publisher<rexy_msg::msg::LegList>("cuurent_state", 10);
     this->subscription = this->create_subscription<rexy_msg::msg::LegList>("goal_state", 10, std::bind(&MotorControl::goal_state_callback, this, _1));
-    
-<<<<<<< HEAD
-    
-    int err = pca9685->openPCA9685();
-    printf("%d\n", err);
-=======
->>>>>>> refs/remotes/origin/main
-    
+
     
     int err = pca9685->openPCA9685();
     //printf("%d\n", err);
