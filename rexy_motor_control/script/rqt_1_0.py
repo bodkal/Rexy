@@ -57,21 +57,32 @@ class MinimalPublisher(Node):
 
 
     def timer_callback(self):
-        x=float(input("input pwm : "))
-        print(x)
+        name=["bl","br","fl","fr"]
+        z=int(input(f"input leg : {name}"))
 
+        x=0
+        while x>-1:
+            y=int(input("input motor : "))
+            x=float(input("input angle : "))
+            #if x>-1:
+            #for i in range(4):
+            self.msg.legs[z].pos[y]=x
+        #print(x)
+ 
         #y=float(input("input id : "))
         #print(f"{y}\t{x}")
         #for i in [1,4,8,7,10]:
         #    self.msg.data[i]+=x
         #for i in [2,5,8,11]:
         #    self.msg.data[i]+=2*x
-        self.msg.legs[0].pos[0]=x
+        
+        #for i in range(4):
+            
         #self.msg.legs[0].vel[0]=1
 
-        print(self.msg)
+            print(self.msg)
 
-        self.publisher_.publish(self.msg)
+            self.publisher_.publish(self.msg)
         #self.get_logger().info('Publishing: "%s"' % self.msg.data)
        # self.i += 1
 
