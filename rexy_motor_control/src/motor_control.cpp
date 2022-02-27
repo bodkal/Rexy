@@ -109,7 +109,7 @@ private:
     for(auto const& val: name_id_maping)
     {
       x.name=val.first;
-      x.pos=home_state;//{home_state[val.second[0]],home_state[val.second[1]],home_state[val.second[2]]};
+      x.pos={home_state[0],home_state[1],home_state[2]};
       x.vel={1.0,1.0,1.0};
       tmp.legs.push_back(x);
     }
