@@ -37,11 +37,50 @@ return deg*3.14/180;
 }
 
 
-rexy_msg::msg::Leg Kinematics::leg_ik(float x,float y,float z,std::string leg_name){ 
+rexy_msg::msg::Leg Kinematics::leg_ik_v2(float x,float y,float z,std::string leg_name){ 
+    float yeter = sqrt(pow(z,2)+pow(y,2)+pow(x,2));
+
+    //sqrt(pow(z,2)+pow(y,2)-pow(l1,2));
+
+    float H = sqrt(pow(yeter,2)-pow(l1,2));
+    //std::cout<<"H : "<<H<<std::endl;
+
     float beta=atan2(z,y);
+    float alfa = atan2(sqrt(pow(z,2)+pow(y,2)-pow(l1,2)),l1);
+    float theta1 = alfa - beta;
+
+
+    float D3 = (pow(H,2)- pow(l2,2)-pow(l3,2))/(-2*l2*l3);
+    float theta3 = acos(D3);
+
+    //-atan2(sqrt(1-pow(D,2)),D);
+    float D2 = (pow(l3,2)- pow(l2,2)-pow(H,2))/(-2*l2*H);
+
+    float theta2 = atan2(x, sqrt(pow(z,2)+pow(y,2))) + acos(D2);//atan2(l3*sin(theta3), l2 + l3*cos(theta3));
+  
+    
+    std::cout<<"t1 : "<<90-this->rad_2_deg(theta1)<<"\t";
+    std::cout<<"t2 : "<<90-this->rad_2_deg(theta2)<<"\t";
+    std::cout<<"t3 : "<<this->rad_2_deg(theta3)-35<<std::endl;
+    
+
+    rexy_msg::msg::Leg leg;
+    leg.name=leg_name;
+    leg.pos={ 90-this->rad_2_deg(theta1),
+             this->rad_2_deg(theta2),
+             140+this->rad_2_deg(theta3)};
+             
+    leg.vel={1.0,1.0,1.0};
+    return leg;
+  }
+
+rexy_msg::msg::Leg Kinematics::leg_ik(float x,float y,float z,std::string leg_name){ 
+
     float H = sqrt(pow(z,2)+pow(y,2)-pow(l1,2));
+
+    float beta=atan2(z,y);
     float alfa = atan2(H,l1);
-    float theta1 =alfa-beta;
+    float theta1 =alfa - beta;
 
 
     float D = (pow(H,2)+pow(x,2) - pow(l2,2)-pow(l3,2))/(2*l2*l3);
@@ -49,11 +88,11 @@ rexy_msg::msg::Leg Kinematics::leg_ik(float x,float y,float z,std::string leg_na
 
     float theta2 = atan2(x, H) - atan2(l3*sin(theta3), l2 + l3*cos(theta3));
   
-    /*
-    std::cout<<"t1 : "<<90-this->rad_2_deg(theta1)<<std::endl;
-    std::cout<<"t2 : "<<this->rad_2_deg(theta2)<<std::endl;
+    
+    std::cout<<"t1 : "<<90-this->rad_2_deg(theta1)<<"\t";
+    std::cout<<"t2 : "<<this->rad_2_deg(theta2)<<"\t";
     std::cout<<"t3 : "<<140+this->rad_2_deg(theta3)<<std::endl;
-    */
+    
 
     rexy_msg::msg::Leg leg;
     leg.name=leg_name;

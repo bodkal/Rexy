@@ -22,6 +22,17 @@ public:
   {
     this->publisher = this->create_publisher<rexy_msg::msg::LegList>("goal_state", 10);
     this->read_config();
+/*
+   this->l1 = 60;
+    this->l2 = 105;
+    this->l3 = 135;
+*/
+/*
+    rexy_kin._v2(-105,60,135,"bt");
+    rexy_kin.leg_ik(-105,60,135,"bt");
+
+    exit(0);
+*/
     this->rexy_status = this->home();
 
     std::cout << rexy_status.legs.size()<<std::endl;
@@ -42,7 +53,7 @@ private:
   void read_config()
   {
 
-    YAML::Node config = YAML::LoadFile("/home/rexy/rexy_ws/src/rexy_movement_manager/config/rexy_motor_config.yaml");
+    YAML::Node config = YAML::LoadFile("/home/koby/rexy_ws/src/rexy_movement_manager/config/rexy_motor_config.yaml");
 
     std::cout << "read configuriton files ... " << std::endl;
     name_id_maping = config["name_id_maping"].as<std::map<std::string, std::vector<int16_t>>>();
@@ -76,14 +87,14 @@ private:
       std::cout << i << std::endl;
       std::cout <<  this->rexy_status.legs.size() << std::endl;
 
-      this->rexy_status.legs[0] = this->rexy_kin.leg_ik(0, 60, i, this->rexy_status.legs[0].name);
-
+      this->rexy_status.legs[0] = this->rexy_kin.leg_ik_v2(0, 60, i, this->rexy_status.legs[0].name);
+/*
       for (auto const &val : this->rexy_status.legs[0].pos)
       {
         std::cout << val << "\t";
       }
       std::cout << std::endl;
-    }
+    }*/
         this->publisher->publish(this->rexy_status);
 
     i -= 5;

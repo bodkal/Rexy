@@ -27,6 +27,8 @@ private:
 
 public:
   rexy_msg::msg::Leg leg_ik(float x,float z,float y,std::string leg_name);
+  rexy_msg::msg::Leg leg_ik_v2(float x,float y,float z,std::string leg_name);
+
   Kinematics();
   
 };
