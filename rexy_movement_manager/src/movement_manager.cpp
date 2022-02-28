@@ -37,7 +37,7 @@ public:
 
     std::cout << rexy_status.legs.size()<<std::endl;
     std::cout << "Ready to start ..." <<std::endl;
-    timer_ = this->create_wall_timer(500ms, std::bind(&MinimalPublisher::timer_callback, this));
+    timer_ = this->create_wall_timer(1500ms, std::bind(&MinimalPublisher::timer_callback, this));
   }
 
 private:
@@ -53,7 +53,7 @@ private:
   void read_config()
   {
 
-    YAML::Node config = YAML::LoadFile("/home/koby/rexy_ws/src/rexy_movement_manager/config/rexy_motor_config.yaml");
+    YAML::Node config = YAML::LoadFile("/home/rexy/rexy_ws/src/rexy_movement_manager/config/rexy_motor_config.yaml");
 
     std::cout << "read configuriton files ... " << std::endl;
     name_id_maping = config["name_id_maping"].as<std::map<std::string, std::vector<int16_t>>>();
@@ -82,7 +82,7 @@ private:
 
   void timer_callback()
   {
-    if (i > 160)
+    if (i > 120)
     {
       std::cout << i << std::endl;
       std::cout <<  this->rexy_status.legs.size() << std::endl;
@@ -96,7 +96,7 @@ private:
       std::cout << std::endl;
     }*/
         this->publisher->publish(this->rexy_status);
-
+}
     i -= 5;
   }
 };
