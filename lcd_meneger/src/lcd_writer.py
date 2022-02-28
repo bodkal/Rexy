@@ -26,8 +26,8 @@ while True:
     lcd.lcd_display_string(f"RAM: {memory} %" , 2)
     sleep(5)
     lcd.lcd_clear()
-    lcd.lcd_display_string(f"IP: ", 1)
-    lcd.lcd_display_string(f"{res}" , 2)
+    lcd.lcd_display_string(f"User: rexy", 1)
+    lcd.lcd_display_string(f"IP:{res}" , 2)
     sleep(5)
     lcd.lcd_clear()
 
