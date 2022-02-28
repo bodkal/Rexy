@@ -5,11 +5,15 @@ using std::placeholders::_1;
 using namespace std::chrono_literals;
 
     void MotorControl::current_pos_service(const std::shared_ptr<rexy_msg::srv::LegListState::Request> request,
-                                   std::shared_ptr<rexy_msg::srv::LegListState:Response> response)
+                                                std::shared_ptr<rexy_msg::srv::LegListState::Response> response)
     {
+
+        std::cout<<request<<std::endl; //just for the worning
+
         for (int i =0; i<4;i++) {
-            response.legs[i] = this->current_state->legs[i];
+            response->legs[i] = this->current_state.legs[i];
         }
+
     }
 
 
@@ -19,13 +23,13 @@ using namespace std::chrono_literals;
                    std::cout <<"read configuriton files ... "<<std::endl;
 
                 // loop over the positions Rectangle and print them:
-              name_id_maping = config["name_id_maping"].as<std::map<std::string, std::vector<int16_t> >>();
+              this->name_id_maping = config["name_id_maping"].as<std::map<std::string, std::vector<int16_t> >>();
 
-              min_pwm_val = config["map_angel_pwm"]["min_pwm_val"].as<std::vector<int16_t>>();
-              max_pwm_val = config["map_angel_pwm"]["max_pwm_val"].as<std::vector<int16_t>>();
-              min_angle_val = config["map_angel_pwm"]["min_angle_val"].as<std::vector<int16_t>>();
-              max_angle_val = config["map_angel_pwm"]["max_angle_val"].as<std::vector<int16_t>>();
-              home_state = config["home"]["pos"].as<std::vector<float>>();
+              this->min_pwm_val = config["map_angel_pwm"]["min_pwm_val"].as<std::vector<int16_t>>();
+              this->max_pwm_val = config["map_angel_pwm"]["max_pwm_val"].as<std::vector<int16_t>>();
+              this->min_angle_val = config["map_angel_pwm"]["min_angle_val"].as<std::vector<int16_t>>();
+              this->max_angle_val = config["map_angel_pwm"]["max_angle_val"].as<std::vector<int16_t>>();
+              this->home_state = config["home"]["pos"].as<std::vector<float>>();
   }
 
 
@@ -54,19 +58,18 @@ using namespace std::chrono_literals;
   }
 
 
-  rexy_msg::msg::LegList motor_control::home(){
+  rexy_msg::msg::LegList MotorControl::home(){
 
-    rexy_msg::msg::LegList tmp;
-    rexy_msg::msg::Leg x;
+    rexy_msg::msg::LegList tmp_legs;
+    rexy_msg::msg::Leg tmp_leg;
 
     for(auto const& val: name_id_maping)
     {
-      x.name=val.first;
-      x.pos={home_state[0],home_state[1],home_state[2]};
-      x.vel={1.0,1.0,1.0};
-      tmp.legs.push_back(x);
+      tmp_leg.name=val.first;
+      tmp_leg.pos={this->home_state[0],this->home_state[1],this->home_state[2]};
+      tmp_legs.legs.push_back(tmp_leg);
     }
-    return tmp;
+    return tmp_legs;
 
   }
   void MotorControl::goal_state_callback(const rexy_msg::msg::LegList::SharedPtr msg)
@@ -82,7 +85,7 @@ using namespace std::chrono_literals;
   return round((x - in_min) * (out_max - out_min) / (in_max - in_min) + out_min);
 }
 
-  int motor_control::convert_agnle_to_pwm(double angele,int id)
+  int MotorControl::convert_agnle_to_pwm(double angele,int id)
   {
     int min_pwm = std::min(this->min_pwm_val[id],this->max_pwm_val[id]);
     int max_pwm = std::max(this->min_pwm_val[id],this->max_pwm_val[id]);
@@ -101,7 +104,6 @@ using namespace std::chrono_literals;
   }
 
 
-public:
 
     MotorControl::MotorControl() : Node("motor_control")
   { 
@@ -113,8 +115,7 @@ public:
     this->subscription = this->create_subscription<rexy_msg::msg::LegList>
             ("goal_state", 10, std::bind(&MotorControl::goal_state_callback, this, _1));
 
-    this->current_state_service = this->create_service<rexy_msg::srv::LegListState>
-            ("get_current_pos", &current_pos_service);
+    this->current_state_service = this->create_service<rexy_msg::srv::LegListState>("get_current_pos",std::bind(&MotorControl::current_pos_service,this,std::placeholders::_1,std::placeholders::_2));
 
     int err = pca9685->openPCA9685();
 
@@ -131,7 +132,6 @@ public:
     this->timer_ = this->create_wall_timer(40ms, std::bind(&MotorControl::publish_state, this));
     
   }
-};
 
 
 

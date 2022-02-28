@@ -71,7 +71,7 @@ private:
 
       x.name = val.first;
       x.pos = {home_state[0], home_state[1], home_state[2]};
-      x.vel = {1.0, 1.0, 1.0};
+      //x.vel = {1.0, 1.0, 1.0};
       tmp.legs.push_back(x);
     }
     std::cout << "lode start config ..." <<std::endl;
