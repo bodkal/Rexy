@@ -37,7 +37,7 @@ public:
 
     std::cout << rexy_status.legs.size()<<std::endl;
     std::cout << "Ready to start ..." <<std::endl;
-    timer_ = this->create_wall_timer(500ms, std::bind(&MinimalPublisher::timer_callback, this));
+    timer_ = this->create_wall_timer(1500ms, std::bind(&MinimalPublisher::timer_callback, this));
   }
 
 private:
@@ -81,23 +81,23 @@ private:
   }
 
   void timer_callback()
-  {
-    if (i > 120)
+120  {
+    if (i > 160)
     {
       std::cout << i << std::endl;
       std::cout <<  this->rexy_status.legs.size() << std::endl;
 
-      this->rexy_status.legs[0] = this->rexy_kin.leg_ik_v2(0,200-i + 60, 160, this->rexy_status.legs[0].name);
-
+      this->rexy_status.legs[0] = this->rexy_kin.leg_ik_v2(0, 60, i, this->rexy_status.legs[0].name);
+/*
       for (auto const &val : this->rexy_status.legs[0].pos)
       {
         std::cout << val << "\t";
       }
       std::cout << std::endl;
-   
+    }*/
         this->publisher->publish(this->rexy_status);
 }
-    i -= 2;
+    i -= 5;
   }
 };
 
