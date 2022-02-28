@@ -58,17 +58,20 @@ rexy_msg::msg::Leg Kinematics::leg_ik_v2(float x,float y,float z,std::string leg
 
     float theta2 = atan2(x, sqrt(pow(z,2)+pow(y,2))) + acos(D2);//atan2(l3*sin(theta3), l2 + l3*cos(theta3));
   
+    theta1=90-this->rad_2_deg(theta1);
+    theta2=90-this->rad_2_deg(theta2);
+    theta3=this->rad_2_deg(theta3)-35;
     
-    std::cout<<"t1 : "<<90-this->rad_2_deg(theta1)<<"\t";
-    std::cout<<"t2 : "<<90-this->rad_2_deg(theta2)<<"\t";
-    std::cout<<"t3 : "<<this->rad_2_deg(theta3)-35<<std::endl;
+    std::cout<<"t1 : "<<theta1<<"\t";
+    std::cout<<"t2 : "<<theta2<<"\t";
+    std::cout<<"t3 : "<<theta3<<std::endl;
     
 
     rexy_msg::msg::Leg leg;
     leg.name=leg_name;
-    leg.pos={ 90-this->rad_2_deg(theta1),
-             this->rad_2_deg(theta2),
-             140+this->rad_2_deg(theta3)};
+    leg.pos={theta1,
+             theta2,
+             theta3};
              
     leg.vel={1.0,1.0,1.0};
     return leg;
