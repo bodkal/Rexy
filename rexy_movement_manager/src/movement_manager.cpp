@@ -88,13 +88,13 @@ private:
       std::cout <<  this->rexy_status.legs.size() << std::endl;
 
       this->rexy_status.legs[0] = this->rexy_kin.leg_ik_v2(0, 60, i, this->rexy_status.legs[0].name);
-/*
+
       for (auto const &val : this->rexy_status.legs[0].pos)
       {
         std::cout << val << "\t";
       }
       std::cout << std::endl;
-    }*/
+    }
         this->publisher->publish(this->rexy_status);
 }
     i -= 5;
