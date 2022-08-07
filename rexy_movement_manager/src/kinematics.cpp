@@ -5,11 +5,19 @@ using namespace std::chrono_literals;
 
 void Kinematics::read_config(){
     
+     YAML::Node config = YAML::LoadFile("/home/koby/rexy_ws/src/rexy_movement_manager/config/rexy_motor_config.yaml");
+     std::cout <<"read configuriton files ... "<<std::endl;
+
+    this->l1=config["body"]["leg"].as<std::vector<float>>()[0];
+    this->l2=config["body"]["leg"].as<std::vector<float>>()[1];
+    this->l3=config["body"]["leg"].as<std::vector<float>>()[2];
+
+/*
     this->l1 = 60;
     this->l2 = 105;
     this->l3 = 135;
     
-    /*
+    
     YAML::Node config = YAML::LoadFile("/home/koby/rexy_ws/src/rexy_motor_control/config/rexy_motor_config.yaml");
                    std::cout <<"read configuriton files ... "<<std::endl;
 
