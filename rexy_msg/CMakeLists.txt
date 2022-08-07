@@ -28,6 +28,7 @@ rosidl_generate_interfaces(${PROJECT_NAME}
   "msg/Leg.msg"
   "msg/LegList.msg"
   "msg/Sonar.msg"
+  "srv/LegListState"
  )
 
 if(BUILD_TESTING)
