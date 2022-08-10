@@ -13,19 +13,18 @@
 #include <chrono>
 #include <memory>
 #include <cstdint>
+#include <vector>
+#include <map>
+
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/int16.hpp"
 #include "std_msgs/msg/int16_multi_array.hpp"
 #include "rexy_msg/msg/leg.hpp"
 #include "rexy_msg/msg/leg_list.hpp"
+#include "rexy_msg/srv/leg_list_state.hpp"
 
-#include "rexy_msg/srv/LegListState.hpp"
-
-
-#include <map>
 #include <JHPWMDriver/src/JHPWMPCA9685.h>
-#include <vector>
-
+#include "yaml-cpp/yaml.h"
 
 
 
@@ -49,7 +48,7 @@ private:
     std::map <std::string, std::vector<int16_t>> name_id_maping;
 
     void current_pos_service(const std::shared_ptr<rexy_msg::srv::LegListState::Request> request,
-                                           std::shared_ptr<rexy_msg::srv::LegListState:Response> response);
+                                    std::shared_ptr<rexy_msg::srv::LegListState::Response> response);
 
     void read_config();
 
@@ -67,7 +66,7 @@ private:
 
 public:
 
-    MotorControl() : Node("motor_control");
+    MotorControl() ;
 
 };
 

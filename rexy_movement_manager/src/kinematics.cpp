@@ -81,7 +81,7 @@ rexy_msg::msg::Leg Kinematics::leg_ik_v2(float x,float y,float z,std::string leg
              theta2,
              theta3};
              
-    leg.vel={1.0,1.0,1.0};
+   // leg.vel={1.0,1.0,1.0};
     return leg;
   }
 
@@ -111,7 +111,7 @@ rexy_msg::msg::Leg Kinematics::leg_ik(float x,float y,float z,std::string leg_na
              this->rad_2_deg(theta2),
              140+this->rad_2_deg(theta3)};
              
-    leg.vel={1.0,1.0,1.0};
+    //leg.vel={1.0,1.0,1.0};
     return leg;
   }
   
