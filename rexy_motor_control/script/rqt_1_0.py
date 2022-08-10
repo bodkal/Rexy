@@ -4,6 +4,7 @@ from rclpy.node import Node
 from std_msgs.msg import String
 #from std_msgs.msg import Int16MultiArray
 from rexy_msg.msg import LegList ,Leg
+from rexy_msg.sev import LegListState
 
 
 
@@ -39,7 +40,7 @@ class MinimalPublisher(Node):
         names=["br","fr","fl","bl"]
         motors_id=range(12)
         motors_pos=[90.0, 35.0, 60.0, 90.0, 30.0, 60.0, 90.0, 30.0, 60.0, 90.0, 35.0, 60.0]
-        motors_vel=[1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0,1.0]
+
 
         for i in range(4):
             number_of_legs=all_leg.__len__()
@@ -47,7 +48,7 @@ class MinimalPublisher(Node):
             all_leg[-1].name=names[i]
             all_leg[-1].id=motors_id[number_of_legs*3:3+number_of_legs*3]
             all_leg[-1].pos=motors_pos[number_of_legs*3:3+number_of_legs*3]
-            all_leg[-1].vel=motors_vel[number_of_legs*3:3+number_of_legs*3]
+
 
 
         self.msg = LegList()
