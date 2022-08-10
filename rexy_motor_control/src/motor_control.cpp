@@ -1,7 +1,6 @@
 #include "rexy_motor_control/motor_control.h"
 
-using std::placeholders::_1;
-
+using namespace std::placeholders;
 using namespace std::chrono_literals;
 
     void MotorControl::current_pos_service(const std::shared_ptr<rexy_msg::srv::LegListState::Request> request,
@@ -115,7 +114,8 @@ using namespace std::chrono_literals;
     this->subscription = this->create_subscription<rexy_msg::msg::LegList>
             ("goal_state", 10, std::bind(&MotorControl::goal_state_callback, this, _1));
 
-    this->current_state_service = this->create_service<rexy_msg::srv::LegListState>("get_current_pos",std::bind(&MotorControl::current_pos_service,this,std::placeholders::_1,std::placeholders::_2));
+    this->current_state_service = this->create_service<rexy_msg::srv::LegListState>
+            ("get_current_pos",std::bind(&MotorControl::current_pos_service,this,_1,_2));
 
     int err = pca9685->openPCA9685();
 
@@ -145,67 +145,3 @@ int main(int argc, char *argv[])
 }
 
 
-
-#include <rclcpp/rclcpp.hpp>
-
-#include <std_srvs/srv/set_bool.hpp>
-
-using namespace std::chrono_literals;
-
-namespace ros2_examples
-{
-
-    /* class ServiceServerExample //{ */
-
-    class ServiceServerExample : ~/
-    {
-    public:
-        ServiceServerExample(rclcpp::NodeOptions options);
-
-    private:
-        // | --------------------- service servers -------------------- |
-
-        rclcpp::Service<std_srvs::srv::SetBool>::SharedPtr service_server_;
-
-        void callback_set_bool(const std::shared_ptr<std_srvs::srv::SetBool::Request> request,
-                                     std::shared_ptr<std_srvs::srv::SetBool::Response> response);
-    };
-
-    //}
-
-    /* ServiceServerExample() //{ */
-
-    ServiceServerExample::ServiceServerExample(rclcpp::NodeOptions options) : Node("service_server_example", options)
-    {
-
-        RCLCPP_INFO(get_logger(), "[ServiceServerExample]: initializing");
-
-        // | --------------------- service server --------------------- |
-
-        service_server_ = create_service<std_srvs::srv::SetBool>(
-                "~/set_bool_in", std::bind(&ServiceServerExample::callback_set_bool, this, std::placeholders::_1, std::placeholders::_2));
-
-        RCLCPP_INFO(get_logger(), "[ServiceServerExample]: initialized");
-    }
-
-    //}
-
-    // | ------------------------ callbacks ----------------------- |
-
-    /* callback_set_bool() //{ */
-
-    void ServiceServerExample::callback_set_bool(const std::shared_ptr<std_srvs::srv::SetBool::Request> request,
-                                                 std::shared_ptr<std_srvs::srv::SetBool::Response> response)
-    {
-        RCLCPP_INFO(get_logger(), "[ServiceServerExample]: received service call: %s", request->data ? "TRUE" : "FALSE");
-
-        response->message = "succeeded";
-        response->success = true;
-    }
-
-    //}
-
-}  // namespace ros2_examples
-
-#include <rclcpp_components/register_node_macro.hpp>
-RCLCPP_COMPONENTS_REGISTER_NODE(ros2_examples::ServiceServerExample)
