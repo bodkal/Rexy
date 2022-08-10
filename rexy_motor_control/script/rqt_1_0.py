@@ -4,7 +4,7 @@ from rclpy.node import Node
 from std_msgs.msg import String
 #from std_msgs.msg import Int16MultiArray
 from rexy_msg.msg import LegList ,Leg
-from rexy_msg.sev import LegListState
+from rexy_msg.srv import LegListState
 
 
 
