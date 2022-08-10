@@ -7,11 +7,19 @@ using namespace std::chrono_literals;
                                                 std::shared_ptr<rexy_msg::srv::LegListState::Response> response)
     {
 
-        std::cout<<request<<std::endl; //just for the worning
+        std::cout<<this->current_state.legs[0].pos[0]<<std::endl; //just for the worning
+        std::cout<<response->legs[0].pos[0]<<std::endl; //just for the worning
+
 
         for (int i =0; i<4;i++) {
-            response->legs[i] = this->current_state.legs[i];
+		for(int j =0;j<3;j++){
+             std::cout<<i<<std::endl; //just for the worning
+            response->legs[i].pos[j] = this->current_state.legs[i].pos[j];
+ 	    response->legs[i].id[j] = this->current_state.legs[i].id[j];
         }
+ response->legs[i].name = this->current_state.name;
+}
+ std::cout<<5<<std::endl; //just for the worning
 
     }
 

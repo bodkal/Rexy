@@ -35,12 +35,11 @@ class MinimalPublisher(Node):
     def __init__(self):
         super().__init__('micro_rqt')
         self.publisher_ = self.create_publisher(LegList, 'goal_state', 10)
-        self.read_state_serves = self.create_client(read_state, '/get_current_pos')
-        
+        self.read_state_serves = self.create_client(LegListState, '/get_current_pos')
+
         while not self.read_state_serves.wait_for_service(timeout_sec=2.0):
             print('service not available, waiting again...')
-           
-        
+
         all_leg=[]
         names=["br","fr","fl","bl"]
         motors_id=range(12)
@@ -57,13 +56,12 @@ class MinimalPublisher(Node):
         self.msg = LegList()
         self.msg.legs=all_leg
         self.timer = self.create_timer(0.5, self.timer_callback)
-         
-        
+
     def send_request(self):
-	future = self.read_state_serves.call_async(LegListState.Request())
+        future = self.read_state_serves.call_async(LegListState.Request())
         rclpy.spin_until_future_complete(self, future)
         print(future.result())
-        
+
 
     def timer_callback(self):
         name=["bl","br","fl","fr"]
@@ -77,16 +75,16 @@ class MinimalPublisher(Node):
             #for i in range(4):
             self.msg.legs[z].pos[y]=x
         #print(x)
- 
+
         #y=float(input("input id : "))
         #print(f"{y}\t{x}")
         #for i in [1,4,8,7,10]:
         #    self.msg.data[i]+=x
         #for i in [2,5,8,11]:
         #    self.msg.data[i]+=2*x
-        
+
         #for i in range(4):
-            
+
         #self.msg.legs[0].vel[0]=1
 
             print(self.msg)
