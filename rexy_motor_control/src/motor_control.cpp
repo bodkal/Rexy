@@ -15,9 +15,9 @@ using namespace std::chrono_literals;
 		for(int j =0;j<3;j++){
              std::cout<<i<<std::endl; //just for the worning
             response->legs[i].pos[j] = this->current_state.legs[i].pos[j];
- 	    response->legs[i].id[j] = this->current_state.legs[i].id[j];
+ 	        response->legs[i].id[j] = this->current_state.legs[i].id[j];
         }
- response->legs[i].name = this->current_state.name;
+ response->legs[i].name = this->current_state.legs[i].name;
 }
  std::cout<<5<<std::endl; //just for the worning
 
