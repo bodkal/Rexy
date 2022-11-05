@@ -1,3 +1,0 @@
-Invoking command in '/home/rexy/rexy_ws/src/build/rexy_msg': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/foxy /usr/bin/cmake /home/rexy/rexy_ws/src/rexy_msg -DCMAKE_INSTALL_PREFIX=/home/rexy/rexy_ws/src/install/rexy_msg
-Invoked command in '/home/rexy/rexy_ws/src/build/rexy_msg' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/foxy /usr/bin/cmake /home/rexy/rexy_ws/src/rexy_msg -DCMAKE_INSTALL_PREFIX=/home/rexy/rexy_ws/src/install/rexy_msg
-Invoking command in '/home/rexy/rexy_ws/src/build/rexy_msg': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/foxy /usr/bin/cmake --build /home/rexy/rexy_ws/src/build/rexy_msg -- -j4 -l4
