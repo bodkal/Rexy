@@ -1,0 +1,3 @@
+Invoking command in '/home/rexy/rexy_ws/src/build/rexy_movement_manager': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/foxy /usr/bin/cmake /home/rexy/rexy_ws/src/rexy_movement_manager -DCMAKE_INSTALL_PREFIX=/home/rexy/rexy_ws/src/install/rexy_movement_manager
+Invoked command in '/home/rexy/rexy_ws/src/build/rexy_movement_manager' returned '0': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/foxy /usr/bin/cmake /home/rexy/rexy_ws/src/rexy_movement_manager -DCMAKE_INSTALL_PREFIX=/home/rexy/rexy_ws/src/install/rexy_movement_manager
+Invoking command in '/home/rexy/rexy_ws/src/build/rexy_movement_manager': CMAKE_PREFIX_PATH=${CMAKE_PREFIX_PATH}:/opt/ros/foxy /usr/bin/cmake --build /home/rexy/rexy_ws/src/build/rexy_movement_manager -- -j4 -l4
