@@ -69,7 +69,7 @@ LegControl::LegControl(PCA9685 &motors_ref,const std::string  &leg_name):
       for (int motor_index = 0;motor_index < 3;motor_index++){
           int pwm_to_motor=this->convert_angle_to_pwm(new_state.pos[motor_index],motor_index);
           this->motor_drivers->setPWM(motors[motor_index], 0, pwm_to_motor);
-          std::cout<<"angel: "<<new_state.pos[motor_index]<<"\tpwm:"<<pwm_to_motor<<std::endl;
+      //    std::cout<<"angel: "<<new_state.pos[motor_index]<<"\tpwm:"<<pwm_to_motor<<std::endl;
       }
       this->leg_state=new_state;
   }

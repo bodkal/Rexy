@@ -36,11 +36,11 @@ public:
         //-atan2(sqrt(1-pow(D,2)),D);
         float D2 = (pow(this->l3,2)- pow(this->l2,2)-pow(H,2))/(-2*this->l2*H);
 
-        float theta2 = atan2(pos.x(), sqrt(pow(pos.z(),2)+pow(pos.y(),2))) + acos(D2);//atan2(l3*sin(theta3), l2 + l3*cos(theta3));
+        float theta2 = atan2(-pos.x(), sqrt(pow(pos.z(),2)+pow(pos.y(),2))) + acos(D2);
 
         theta1=90-this->rad_2_deg(theta1);
         theta2=90-this->rad_2_deg(theta2);
-        theta3=this->rad_2_deg(theta3)-35;
+        theta3=this->rad_2_deg(theta3);
 
         return {theta1,theta2,theta3};
     }
