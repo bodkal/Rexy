@@ -9,6 +9,8 @@
 #include <tf2/LinearMath/Transform.h>
 #include <tf2/LinearMath/Vector3.h>
 
+#include <ncurses.h>
+
 using namespace std::chrono_literals;
 
 class MinimalPublisher : public rclcpp::Node
@@ -40,11 +42,11 @@ public:
     }
     if (method == "forward")
     {
-      this->strate_walk(new_goal,2,1);
+      this->strate_walk(new_goal, 2, 1);
     }
-   if (method == "backward")
+    if (method == "backward")
     {
-      this->strate_walk(new_goal,2,-1);
+      this->strate_walk(new_goal, 2, -1);
     }
   }
 
@@ -55,35 +57,34 @@ public:
   //   }
   // }
 
-  void strate_walk(const std::map<std::string, tf2::Vector3> &new_goal,float speed,int dir)
+  void strate_walk(const std::map<std::string, tf2::Vector3> &new_goal, float speed, int dir)
   {
-    float x_offset = 50*dir;
-    float z_offset = 15;
+    float x_offset = 70 * dir;
+    float z_offset = 25;
 
     this->cartesian_move({{"fr", new_goal.at("fr") + tf2::Vector3({x_offset / 2, 0, -z_offset})},
-                          {"fl", new_goal.at("fl") + tf2::Vector3({-x_offset / 2, 0, z_offset})},
-                          {"br", new_goal.at("br") + tf2::Vector3({-x_offset / 2, 0, z_offset})},
+                          {"fl", new_goal.at("fl") + tf2::Vector3({-x_offset / 2, 0, 0})},
+                          {"br", new_goal.at("br") + tf2::Vector3({-x_offset / 2, 0, 0})},
                           {"bl", new_goal.at("bl") + tf2::Vector3({x_offset / 2, 0, -z_offset})}},
                          speed);
 
     this->cartesian_move({{"fr", new_goal.at("fr") + tf2::Vector3({x_offset / 2, 0, 0})},
-                          {"fl", new_goal.at("fl") + tf2::Vector3({-x_offset / 2, 0, z_offset})},
-                          {"br", new_goal.at("br") + tf2::Vector3({-x_offset / 2, 0, z_offset})},
+                          {"fl", new_goal.at("fl") + tf2::Vector3({-x_offset / 2, 0, 0})},
+                          {"br", new_goal.at("br") + tf2::Vector3({-x_offset / 2, 0, 0})},
                           {"bl", new_goal.at("bl") + tf2::Vector3({x_offset / 2, 0, 0})}},
                          speed);
 
-    this->cartesian_move({{"fr", new_goal.at("fr") + tf2::Vector3({-x_offset / 2, 0, z_offset})},
+    this->cartesian_move({{"fr", new_goal.at("fr") + tf2::Vector3({-x_offset / 2, 0, 0})},
                           {"fl", new_goal.at("fl") + tf2::Vector3({x_offset / 2, 0, -z_offset})},
                           {"br", new_goal.at("br") + tf2::Vector3({x_offset / 2, 0, -z_offset})},
-                          {"bl", new_goal.at("bl") + tf2::Vector3({-x_offset / 2, 0, z_offset})}},
+                          {"bl", new_goal.at("bl") + tf2::Vector3({-x_offset / 2, 0, 0})}},
                          speed);
 
-     this->cartesian_move({{"fr", new_goal.at("fr") + tf2::Vector3({-x_offset / 2, 0, z_offset})},
+    this->cartesian_move({{"fr", new_goal.at("fr") + tf2::Vector3({-x_offset / 2, 0, 0})},
                           {"fl", new_goal.at("fl") + tf2::Vector3({x_offset / 2, 0, 0})},
                           {"br", new_goal.at("br") + tf2::Vector3({x_offset / 2, 0, 0})},
-                          {"bl", new_goal.at("bl") + tf2::Vector3({-x_offset / 2, 0, z_offset})}},
+                          {"bl", new_goal.at("bl") + tf2::Vector3({-x_offset / 2, 0, 0})}},
                          speed);
-
   }
 
   void cartesian_move(const std::map<std::string, tf2::Vector3> &new_goal, int speed)
@@ -110,11 +111,11 @@ public:
       this->legs.at(name).set_new_state(start.at(name));
     }
 
-    rclcpp::Rate rate(110-speed*10);
+    rclcpp::Rate rate(110 - speed * 10);
 
     for (int i = 0; i < legs_max_error; i += speed)
     {
-      std::cout << "i: " << i << std::endl;
+      // std::cout << "i: " << i << std::endl;
 
       for (const std::string &name : this->legs_name)
       {
@@ -123,9 +124,30 @@ public:
           this->legs.at(name).set_new_state(start.at(name) + i * delta.at(name));
         }
       }
-    //  this->print_legs_status();
+      //  this->print_legs_status();
       rate.sleep();
     }
+  }
+
+  void joystick(std::map<std::string, tf2::Vector3> start_goal)
+  {
+    rclcpp::Rate rate(100);
+
+    std::string s;
+    std::cout << "\tW\nA\t\tD\n\tX\n\nO" << std::endl;
+    do
+    {
+      std::cin >> s;
+      if (s == "w")
+      {
+        this->move(start_goal, "forward");
+      }
+      else if (s == "x")
+      {
+        this->move(start_goal, "backward");
+      }
+      rate.sleep();
+    } while (s != "o");
   }
 
 private:
@@ -199,35 +221,18 @@ int main(int argc, char *argv[])
   rclcpp::init(argc, argv);
   MinimalPublisher a;
   Kinematics kin;
-  std::cout << "enter to start" << std::endl;
   float x = -10;
   float y = 60;
-
-  std::map<std::string, tf2::Vector3> start_goal({{"fr", {x, y, 140}},
-                                                  {"fl", {x, y, 140}},
-                                                  {"br", {x, y, 140}},
-                                                  {"bl", {x, y, 140}}});
-
+  std::map<std::string, tf2::Vector3> start_goal({{"fr", {x, y, 150}},
+                                                  {"fl", {x, y, 150}},
+                                                  {"br", {x, y + 10, 140}},
+                                                  {"bl", {x, y + 10, 140}}});
   a.move(start_goal, "cartesian");
 
   std::cout << "enter to start" << std::endl;
 
   std::cin.get();
+  a.joystick(start_goal);
 
-  for (int i = 0; i < 5; i++)
-  {
-    a.move(start_goal,"forward");
-    }
-  std::cin.get();
-   a.move(start_goal, "cartesian");
-
-  std::cin.get();
-  for (int i = 0; i < 5; i++)
-  {
-    a.move(start_goal,"backward");
-  }
-      std::cin.get();
-
-    a.move(start_goal, "cartesian");
-    return 0;
-  }
+  return 0;
+}
