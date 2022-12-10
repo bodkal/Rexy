@@ -32,21 +32,61 @@ public:
     std::cout << "Ready to start ..." << std::endl;
   }
 
-  void move(std::map<std::string, tf2::Vector3> &new_goal, std::string method)
+  void move(const std::map<std::string, tf2::Vector3> &new_goal, std::string method)
   {
     if (method == "cartesian")
     {
-      this->cartesian_move(new_goal, 1);
+      this->cartesian_move(new_goal, 2);
     }
-  }
-  
-  void step_move(){
-    for (const std::string &name : this->legs_name)
+    if (method == "forward")
     {
-      this->legs.at(name).set_new_state(start.at(name));
+      this->strate_walk(new_goal,2,1);
+    }
+   if (method == "backward")
+    {
+      this->strate_walk(new_goal,2,-1);
     }
   }
-  void cartesian_move(std::map<std::string, tf2::Vector3> &new_goal, int speed)
+
+  // void step_move(){
+  //   for (const std::string &name : this->legs_name)
+  //   {
+  //     this->legs.at(name).set_new_state(this->start.at(name));
+  //   }
+  // }
+
+  void strate_walk(const std::map<std::string, tf2::Vector3> &new_goal,float speed,int dir)
+  {
+    float x_offset = 50*dir;
+    float z_offset = 15;
+
+    this->cartesian_move({{"fr", new_goal.at("fr") + tf2::Vector3({x_offset / 2, 0, -z_offset})},
+                          {"fl", new_goal.at("fl") + tf2::Vector3({-x_offset / 2, 0, z_offset})},
+                          {"br", new_goal.at("br") + tf2::Vector3({-x_offset / 2, 0, z_offset})},
+                          {"bl", new_goal.at("bl") + tf2::Vector3({x_offset / 2, 0, -z_offset})}},
+                         speed);
+
+    this->cartesian_move({{"fr", new_goal.at("fr") + tf2::Vector3({x_offset / 2, 0, 0})},
+                          {"fl", new_goal.at("fl") + tf2::Vector3({-x_offset / 2, 0, z_offset})},
+                          {"br", new_goal.at("br") + tf2::Vector3({-x_offset / 2, 0, z_offset})},
+                          {"bl", new_goal.at("bl") + tf2::Vector3({x_offset / 2, 0, 0})}},
+                         speed);
+
+    this->cartesian_move({{"fr", new_goal.at("fr") + tf2::Vector3({-x_offset / 2, 0, z_offset})},
+                          {"fl", new_goal.at("fl") + tf2::Vector3({x_offset / 2, 0, -z_offset})},
+                          {"br", new_goal.at("br") + tf2::Vector3({x_offset / 2, 0, -z_offset})},
+                          {"bl", new_goal.at("bl") + tf2::Vector3({-x_offset / 2, 0, z_offset})}},
+                         speed);
+
+     this->cartesian_move({{"fr", new_goal.at("fr") + tf2::Vector3({-x_offset / 2, 0, z_offset})},
+                          {"fl", new_goal.at("fl") + tf2::Vector3({x_offset / 2, 0, 0})},
+                          {"br", new_goal.at("br") + tf2::Vector3({x_offset / 2, 0, 0})},
+                          {"bl", new_goal.at("bl") + tf2::Vector3({-x_offset / 2, 0, z_offset})}},
+                         speed);
+
+  }
+
+  void cartesian_move(const std::map<std::string, tf2::Vector3> &new_goal, int speed)
   {
     std::map<std::string, tf2::Vector3> delta;
     std::map<std::string, tf2::Vector3> start;
@@ -69,30 +109,28 @@ public:
       }
       this->legs.at(name).set_new_state(start.at(name));
     }
-    std::cout << "legs_max_error: " << legs_max_error << std::endl;
 
+    rclcpp::Rate rate(110-speed*10);
 
-      rclcpp::Rate rate(100);
-      for (int i = 0; i < legs_max_error; i += speed)
+    for (int i = 0; i < legs_max_error; i += speed)
+    {
+      std::cout << "i: " << i << std::endl;
+
+      for (const std::string &name : this->legs_name)
       {
-        std::cout << "i: " << i << std::endl;
-
-        for (const std::string &name : this->legs_name)
+        if ((max_error.at(name) > 0) & (i <= max_error.at(name)))
         {
-          std::cout << "name: " << name << " max_error.at(name):" << max_error.at(name) << std::endl;
-          if (max_error.at(name)>0 & i <= max_error.at(name))
-          {
-            this->legs.at(name).set_new_state(start.at(name) + i * delta.at(name));
-          }
+          this->legs.at(name).set_new_state(start.at(name) + i * delta.at(name));
         }
-        this->print_legs_status();
-        rate.sleep();
       }
+    //  this->print_legs_status();
+      rate.sleep();
     }
+  }
 
 private:
   std::array<int, 2> test;
-  PCA9685 pca9685; 
+  PCA9685 pca9685;
   rexy_msg::msg::LegList rexy_status;
   std::map<std::string, LegControl> legs;
   std::array<std::string, 4> legs_name;
@@ -162,35 +200,34 @@ int main(int argc, char *argv[])
   MinimalPublisher a;
   Kinematics kin;
   std::cout << "enter to start" << std::endl;
-  std::map<std::string, tf2::Vector3> new_goal({{"fr", {0, 60, 160}},
-                                                {"fl", {0, 60, 160}},
-                                                {"br", {0, 60, 160}},
-                                                {"bl", {0, 60, 160}}});
+  float x = -10;
+  float y = 60;
 
-  std::map<std::string, tf2::Vector3> new_goal1({{"fr", {0, 60, 160}},
-                                                 {"fl", {0, 60, 160}},
-                                                 {"br", {0, 60, 160}},
-                                                 {"bl", {0, 60, 160}}});
+  std::map<std::string, tf2::Vector3> start_goal({{"fr", {x, y, 140}},
+                                                  {"fl", {x, y, 140}},
+                                                  {"br", {x, y, 140}},
+                                                  {"bl", {x, y, 140}}});
 
-  std::map<std::string, tf2::Vector3> new_goal2({{"fr", {0, 60, 120}},
-                                                 {"fl", {0, 60, 160}},
-                                                 {"br", {0, 60, 160}},
-                                                 {"bl", {0, 60, 160}}});
-
-  a.move(new_goal, "cartesian");
+  a.move(start_goal, "cartesian");
 
   std::cout << "enter to start" << std::endl;
+
   std::cin.get();
 
-  a.move(new_goal1, "cartesian");
-  a.move(new_goal2, "cartesian");
-  a.move(new_goal1, "cartesian"); /*
-    a.move(new_goal2,"cartesian");
-    a.move(new_goal1,"cartesian");
-    a.move(new_goal2,"cartesian");
-    a.move(new_goal1,"cartesian");
-    a.move(new_goal2,"cartesian");
-    a.move(new_goal1,"cartesian");
-  */
-  return 0;
-}
+  for (int i = 0; i < 5; i++)
+  {
+    a.move(start_goal,"forward");
+    }
+  std::cin.get();
+   a.move(start_goal, "cartesian");
+
+  std::cin.get();
+  for (int i = 0; i < 5; i++)
+  {
+    a.move(start_goal,"backward");
+  }
+      std::cin.get();
+
+    a.move(start_goal, "cartesian");
+    return 0;
+  }
