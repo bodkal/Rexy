@@ -10,6 +10,7 @@
 #include <tf2/LinearMath/Vector3.h>
 
 #include <ncurses.h>
+#include <string>
 
 using namespace std::chrono_literals;
 
@@ -34,19 +35,28 @@ public:
     std::cout << "Ready to start ..." << std::endl;
   }
 
-  void move(const std::map<std::string, tf2::Vector3> &new_goal, std::string method)
+  void move(const std::map<std::string, tf2::Vector3> &new_goal, int speed, std::string method)
   {
+
     if (method == "cartesian")
     {
-      this->cartesian_move(new_goal, 2);
+      this->cartesian_move(new_goal, speed);
     }
     if (method == "forward")
     {
-      this->strate_walk(new_goal, 2, 1);
+      this->strate_walk(new_goal, speed, 1);
     }
     if (method == "backward")
     {
-      this->strate_walk(new_goal, 2, -1);
+      this->strate_walk(new_goal, speed, -1);
+    }
+    if (method == "turn_left")
+    {
+      this->turn(new_goal, speed, 1);
+    }
+    if (method == "turn_right")
+    {
+      this->turn(new_goal, speed, -1);
     }
   }
 
@@ -57,33 +67,64 @@ public:
   //   }
   // }
 
-  void strate_walk(const std::map<std::string, tf2::Vector3> &new_goal, float speed, int dir)
+  void turn(const std::map<std::string, tf2::Vector3> &new_goal, float speed, int dir)
   {
-    float x_offset = 70 * dir;
+
+    float x_offset = 25 * dir;
     float z_offset = 25;
 
-    this->cartesian_move({{"fr", new_goal.at("fr") + tf2::Vector3({x_offset / 2, 0, -z_offset})},
-                          {"fl", new_goal.at("fl") + tf2::Vector3({-x_offset / 2, 0, 0})},
-                          {"br", new_goal.at("br") + tf2::Vector3({-x_offset / 2, 0, 0})},
-                          {"bl", new_goal.at("bl") + tf2::Vector3({x_offset / 2, 0, -z_offset})}},
+    this->cartesian_move({{"fr", new_goal.at("fr") + tf2::Vector3({-x_offset, 0, -z_offset})},
+                          {"fl", new_goal.at("fl") + tf2::Vector3({-x_offset, 0, 0})},
+                          {"br", new_goal.at("br") + tf2::Vector3({x_offset, 0, 0})},
+                          {"bl", new_goal.at("bl") + tf2::Vector3({x_offset, 0, -z_offset})}},
                          speed);
 
-    this->cartesian_move({{"fr", new_goal.at("fr") + tf2::Vector3({x_offset / 2, 0, 0})},
-                          {"fl", new_goal.at("fl") + tf2::Vector3({-x_offset / 2, 0, 0})},
-                          {"br", new_goal.at("br") + tf2::Vector3({-x_offset / 2, 0, 0})},
-                          {"bl", new_goal.at("bl") + tf2::Vector3({x_offset / 2, 0, 0})}},
+    this->cartesian_move({{"fr", new_goal.at("fr") + tf2::Vector3({-x_offset, 0, 0})},
+                          {"fl", new_goal.at("fl") + tf2::Vector3({-x_offset, 0, 0})},
+                          {"br", new_goal.at("br") + tf2::Vector3({x_offset, 0, 0})},
+                          {"bl", new_goal.at("bl") + tf2::Vector3({x_offset, 0, 0})}},
                          speed);
 
-    this->cartesian_move({{"fr", new_goal.at("fr") + tf2::Vector3({-x_offset / 2, 0, 0})},
-                          {"fl", new_goal.at("fl") + tf2::Vector3({x_offset / 2, 0, -z_offset})},
-                          {"br", new_goal.at("br") + tf2::Vector3({x_offset / 2, 0, -z_offset})},
-                          {"bl", new_goal.at("bl") + tf2::Vector3({-x_offset / 2, 0, 0})}},
+    this->cartesian_move({{"fr", new_goal.at("fr") + tf2::Vector3({x_offset, 0, 0})},
+                          {"fl", new_goal.at("fl") + tf2::Vector3({x_offset, 0, -z_offset})},
+                          {"br", new_goal.at("br") + tf2::Vector3({-x_offset, 0, -z_offset})},
+                          {"bl", new_goal.at("bl") + tf2::Vector3({-x_offset, 0, 0})}},
                          speed);
 
-    this->cartesian_move({{"fr", new_goal.at("fr") + tf2::Vector3({-x_offset / 2, 0, 0})},
-                          {"fl", new_goal.at("fl") + tf2::Vector3({x_offset / 2, 0, 0})},
-                          {"br", new_goal.at("br") + tf2::Vector3({x_offset / 2, 0, 0})},
-                          {"bl", new_goal.at("bl") + tf2::Vector3({-x_offset / 2, 0, 0})}},
+    this->cartesian_move({{"fr", new_goal.at("fr") + tf2::Vector3({x_offset, 0, 0})},
+                          {"fl", new_goal.at("fl") + tf2::Vector3({x_offset, 0, 0})},
+                          {"br", new_goal.at("br") + tf2::Vector3({-x_offset, 0, 0})},
+                          {"bl", new_goal.at("bl") + tf2::Vector3({-x_offset, 0, 0})}},
+                         speed);
+  }
+
+  void strate_walk(const std::map<std::string, tf2::Vector3> &new_goal, float speed, int dir)
+  {
+    float x_offset = 35 * dir;
+    float z_offset = 25;
+
+    this->cartesian_move({{"fr", new_goal.at("fr") + tf2::Vector3({x_offset, 0, -z_offset})},
+                          {"fl", new_goal.at("fl") + tf2::Vector3({-x_offset, 0, 0})},
+                          {"br", new_goal.at("br") + tf2::Vector3({-x_offset, 0, 0})},
+                          {"bl", new_goal.at("bl") + tf2::Vector3({x_offset, 0, -z_offset})}},
+                         speed);
+
+    this->cartesian_move({{"fr", new_goal.at("fr") + tf2::Vector3({x_offset, 0, 0})},
+                          {"fl", new_goal.at("fl") + tf2::Vector3({-x_offset, 0, 0})},
+                          {"br", new_goal.at("br") + tf2::Vector3({-x_offset, 0, 0})},
+                          {"bl", new_goal.at("bl") + tf2::Vector3({x_offset, 0, 0})}},
+                         speed);
+
+    this->cartesian_move({{"fr", new_goal.at("fr") + tf2::Vector3({-x_offset, 0, 0})},
+                          {"fl", new_goal.at("fl") + tf2::Vector3({x_offset, 0, -z_offset})},
+                          {"br", new_goal.at("br") + tf2::Vector3({x_offset, 0, -z_offset})},
+                          {"bl", new_goal.at("bl") + tf2::Vector3({-x_offset, 0, 0})}},
+                         speed);
+
+    this->cartesian_move({{"fr", new_goal.at("fr") + tf2::Vector3({-x_offset, 0, 0})},
+                          {"fl", new_goal.at("fl") + tf2::Vector3({x_offset, 0, 0})},
+                          {"br", new_goal.at("br") + tf2::Vector3({x_offset, 0, 0})},
+                          {"bl", new_goal.at("bl") + tf2::Vector3({-x_offset, 0, 0})}},
                          speed);
   }
 
@@ -111,7 +152,7 @@ public:
       this->legs.at(name).set_new_state(start.at(name));
     }
 
-    rclcpp::Rate rate(110 - speed * 10);
+    rclcpp::Rate rate(100);
 
     for (int i = 0; i < legs_max_error; i += speed)
     {
@@ -134,20 +175,43 @@ public:
     rclcpp::Rate rate(100);
 
     std::string s;
-    std::cout << "\tW\nA\t\tD\n\tX\n\nO" << std::endl;
+    std::cout << "set speed: " << std::endl;
+
+    std::cin >> s;
+    int speed = stoi(s);
+    std::cout << "start moving\n\n\tW\nA\tS\tD\n\tX\n\nO" << std::endl;
+
     do
     {
       std::cin >> s;
       if (s == "w")
       {
-        this->move(start_goal, "forward");
+        this->move(start_goal, speed, "forward");
       }
       else if (s == "x")
       {
-        this->move(start_goal, "backward");
+        this->move(start_goal, speed, "backward");
+      }
+      else if (s == "d")
+      {
+        this->move(start_goal, speed, "turn_left");
+      }
+      else if (s == "a")
+      {
+        this->move(start_goal, speed, "turn_right");
+      }
+      else if (s == "s")
+      {
+        this->move(start_goal, speed, "cartesian");
       }
       rate.sleep();
     } while (s != "o");
+  }
+
+  void wait_for_enter()
+  {
+    std::cout << "Waiting for enter... " << std::endl;
+    std::cin.get();
   }
 
 private:
@@ -227,11 +291,9 @@ int main(int argc, char *argv[])
                                                   {"fl", {x, y, 150}},
                                                   {"br", {x, y + 10, 140}},
                                                   {"bl", {x, y + 10, 140}}});
-  a.move(start_goal, "cartesian");
+  a.move(start_goal,1, "cartesian");
 
-  std::cout << "enter to start" << std::endl;
-
-  std::cin.get();
+  a.wait_for_enter();
   a.joystick(start_goal);
 
   return 0;
