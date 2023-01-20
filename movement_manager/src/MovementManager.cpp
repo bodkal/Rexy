@@ -1,6 +1,7 @@
 #include "rclcpp/rclcpp.hpp"
 #include "rexy_msg/msg/leg.hpp"
 #include "rexy_msg/msg/leg_list.hpp"
+#include "std_msgs/msg/string.hpp"
 
 #include <motor_control/kinematics.h>
 
@@ -14,18 +15,17 @@
 #include <thread>
 #include <regex>
 
-
 using namespace std::chrono_literals;
+using std::placeholders::_1;
 
-class MovementManager : public rclcpp::Node
+class MovementManager
 {
 public:
-  MovementManager() : Node("movement_manager")
+  MovementManager()
   {
-    this->publisher = this->create_publisher<rexy_msg::msg::LegList>("goal_state", 10);
+
     this->read_config();
-    this->open_motor_connectin();
-    //  std::map<std::string, tf2::Vector3> new_goal;
+    this->open_motor_connection();
 
     for (const std::string &name : this->legs_name)
     {
@@ -35,6 +35,9 @@ public:
     this->go_home();
     this->print_legs_status();
 
+    this->node = rclcpp::Node::make_shared("movement_manager");
+    this->publisher = this->node->create_publisher<rexy_msg::msg::LegList>("goal_state", 10);
+    this->joystick_sub = this->node->create_subscription<std_msgs::msg::String>("joystick", 10, std::bind(&MovementManager::joystick_callback, this, _1));
     std::cout << "Ready to start ..." << std::endl;
   }
 
@@ -62,13 +65,6 @@ public:
       this->turn(new_goal, speed, -1);
     }
   }
-
-  // void step_move(){
-  //   for (const std::string &name : this->legs_name)
-  //   {
-  //     this->legs.at(name).set_new_state(this->start.at(name));
-  //   }
-  // }
 
   void turn(const std::map<std::string, tf2::Vector3> &new_goal, float speed, int dir)
   {
@@ -173,17 +169,15 @@ public:
     }
   }
 
-std::map<std::string, tf2::Vector3> combine_goals(const std::map<std::string, tf2::Vector3>  &goal_a,
-                                                  const std::map<std::string, tf2::Vector3>  &goal_b){
+  std::map<std::string, tf2::Vector3> combine_goals(const std::map<std::string, tf2::Vector3> &goal_a,
+                                                    const std::map<std::string, tf2::Vector3> &goal_b)
+  {
 
-return {{"fr", {goal_a.at("fr").x()+goal_b.at("fr").x(), goal_a.at("fr").y()+goal_b.at("fr").y(), goal_a.at("fr").z()+goal_b.at("fr").z()}},
-        {"fl", {goal_a.at("fl").x()+goal_b.at("fl").x(), goal_a.at("fl").y()+goal_b.at("fl").y(), goal_a.at("fl").z()+goal_b.at("fl").z()}},
-        {"br", {goal_a.at("br").x()+goal_b.at("br").x(), goal_a.at("br").y()+goal_b.at("br").y(), goal_a.at("br").z()+goal_b.at("br").z()}},
-        {"bl", {goal_a.at("bl").x()+goal_b.at("bl").x(), goal_a.at("bl").y()+goal_b.at("bl").y(), goal_a.at("bl").z()+goal_b.at("bl").z()}}} ;
-
-
-                                                  }
-
+    return {{"fr", {goal_a.at("fr").x() + goal_b.at("fr").x(), goal_a.at("fr").y() + goal_b.at("fr").y(), goal_a.at("fr").z() + goal_b.at("fr").z()}},
+            {"fl", {goal_a.at("fl").x() + goal_b.at("fl").x(), goal_a.at("fl").y() + goal_b.at("fl").y(), goal_a.at("fl").z() + goal_b.at("fl").z()}},
+            {"br", {goal_a.at("br").x() + goal_b.at("br").x(), goal_a.at("br").y() + goal_b.at("br").y(), goal_a.at("br").z() + goal_b.at("br").z()}},
+            {"bl", {goal_a.at("bl").x() + goal_b.at("bl").x(), goal_a.at("bl").y() + goal_b.at("bl").y(), goal_a.at("bl").z() + goal_b.at("bl").z()}}};
+  }
 
   void joystick(std::map<std::string, tf2::Vector3> start_goal)
   {
@@ -200,52 +194,63 @@ return {{"fr", {goal_a.at("fr").x()+goal_b.at("fr").x(), goal_a.at("fr").y()+goa
     int speed = std::stoi(new_s);
     std::cout << "start moving\n\n\tW\nA\tS\tD\n\tX\n\nchange speed - 1 - 20\n+ - body up\n- - body down\nO - exit" << std::endl;
 
-    std::thread user_input_thread(&MovementManager::read_char_from_user, this);
-
-
     do
     {
-      
-     new_s=this->user_shard_string;
 
-      
-      if (std::regex_match(new_s, num)){
-            std::cout << "set new speed ... "<<new_s << std::endl;
-            speed = std::stoi(new_s);
-            this->user_shard_string=old_s;
-            new_s=old_s;
-      }
-      else if (new_s == "+"){
-      std::map<std::string, tf2::Vector3> up_goal({{"fr", {0, 0, 2}},
-                                                   {"fl", {0, 0, 2}},
-                                                   {"br", {0, 0, 2}},
-                                                   {"bl", {0,0, 2}}});
-      start_goal = this->combine_goals(start_goal,up_goal);
-      this->move(start_goal, speed, "cartesian");
+      rclcpp::spin_some(this->node);
+      new_s = this->user_shard_string;
 
+      if (std::regex_match(new_s, num))
+      {
+        std::cout << "set new speed ... " << new_s << std::endl;
+        speed = std::stoi(new_s);
+        this->user_shard_string = old_s;
+        new_s = old_s;
       }
-      else if (new_s == "-"){
-      std::map<std::string, tf2::Vector3> down_goal({{"fr", {0, 0, -2}},
-                                                     {"fl", {0, 0, -2}},
-                                                     {"br", {0, 0, -2}},
-                                                     {"bl", {0,0, -2}}});
+      else if (new_s == "+")
+      {
+        std::map<std::string, tf2::Vector3> up_goal({{"fr", {0, 0, 2}},
+                                                     {"fl", {0, 0, 2}},
+                                                     {"br", {0, 0, 2}},
+                                                     {"bl", {0, 0, 2}}});
+        start_goal = this->combine_goals(start_goal, up_goal);
+        this->move(start_goal, speed, "cartesian");
+      }
+      else if (new_s == "-")
+      {
+        std::map<std::string, tf2::Vector3> down_goal({{"fr", {0, 0, -2}},
+                                                       {"fl", {0, 0, -2}},
+                                                       {"br", {0, 0, -2}},
+                                                       {"bl", {0, 0, -2}}});
 
-      start_goal = this->combine_goals(start_goal,down_goal);
-      this->move(start_goal, speed, "cartesian");
+        start_goal = this->combine_goals(start_goal, down_goal);
+        this->move(start_goal, speed, "cartesian");
       }
-      else if (new_s == "w"){this->move(start_goal, speed, "forward"); }
-      else if (new_s == "x"){this->move(start_goal, speed, "backward"); }
-      else if (new_s == "d"){this->move(start_goal, speed, "turn_left");}
-      else if (new_s == "a"){this->move(start_goal, speed, "turn_right");}
-      else if (new_s == "s"){this->move(start_goal, speed, "cartesian"); }
-      
-      old_s=new_s;
+      else if (new_s == "w")
+      {
+        this->move(start_goal, speed, "forward");
+      }
+      else if (new_s == "x")
+      {
+        this->move(start_goal, speed, "backward");
+      }
+      else if (new_s == "d")
+      {
+        this->move(start_goal, speed, "turn_left");
+      }
+      else if (new_s == "a")
+      {
+        this->move(start_goal, speed, "turn_right");
+      }
+      else if (new_s == "s")
+      {
+        this->move(start_goal, speed, "cartesian");
+      }
+
+      old_s = new_s;
       rate.sleep();
 
     } while (new_s != "o" && rclcpp::ok());
-
-    user_input_thread.join();
-
   }
 
   void wait_for_enter()
@@ -255,7 +260,7 @@ return {{"fr", {goal_a.at("fr").x()+goal_b.at("fr").x(), goal_a.at("fr").y()+goa
   }
 
 private:
-  std::array<int, 2> test;
+  std::shared_ptr<rclcpp::Node> node;
   PCA9685 pca9685;
   rexy_msg::msg::LegList rexy_status;
   std::map<std::string, LegControl> legs;
@@ -264,21 +269,16 @@ private:
 
   std::map<std::string, tf2::Transform> legs_transform;
   rclcpp::Publisher<rexy_msg::msg::LegList>::SharedPtr publisher;
+  rclcpp::Subscription<std_msgs::msg::String>::SharedPtr joystick_sub;
+
   std::string user_shard_string;
 
-void read_char_from_user()
-{
-    rclcpp::Rate rate(20);
-    std::cout << "open to user input " << std::endl;
+  void joystick_callback(const std_msgs::msg::String::SharedPtr msg)
+  {
+    std::cout << msg->data << std::endl;
 
-  do{
-   std::cin>>this->user_shard_string;
-  rate.sleep();
-
-} while (this->user_shard_string != "o" && rclcpp::ok());
-
-}
-
+    this->user_shard_string = msg->data;
+  }
 
   void print_legs_status()
   {
@@ -304,11 +304,9 @@ void read_char_from_user()
           {gripper.second[3], gripper.second[4], gripper.second[5], gripper.second[6]}, // ori
           {gripper.second[0], gripper.second[1], gripper.second[2]});                   // pos
     }
-
-    this->test = config["test"].as<std::array<int, 2>>();
   }
 
-  void open_motor_connectin()
+  void open_motor_connection()
   {
     int err = this->pca9685.openPCA9685();
     // printf("%d\n", err);
@@ -335,12 +333,10 @@ void read_char_from_user()
   }
 };
 
-
-
 int main(int argc, char *argv[])
 {
   rclcpp::init(argc, argv);
-  MovementManager a;
+  MovementManager movement_manager;
   Kinematics kin;
   float x = -10;
   float y = 60;
@@ -348,10 +344,11 @@ int main(int argc, char *argv[])
                                                   {"fl", {x, y, 150}},
                                                   {"br", {x, y + 10, 140}},
                                                   {"bl", {x, y + 10, 140}}});
-  a.move(start_goal,1, "cartesian");
+  movement_manager.move(start_goal, 1, "cartesian");
 
-  a.wait_for_enter();
-  a.joystick(start_goal);
+  movement_manager.wait_for_enter();
+
+  movement_manager.joystick(start_goal);
 
   return 0;
 }
