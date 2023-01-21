@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <package format="2">
-  <name>raspicam2</name>
+  <name>camera</name>
   <version>0.2.1</version>
   <description>Package to access the Raspberry Pi Camera from ROS2.</description>
 

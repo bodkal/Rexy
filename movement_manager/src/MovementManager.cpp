@@ -27,18 +27,18 @@ public:
     this->read_config();
     this->open_motor_connection();
 
-    for (const std::string &name : this->legs_name)
-    {
-      this->legs[name] = LegControl(this->pca9685, name);
-    }
-
     this->go_home();
+    this->move(this->start_goal, 3,"cartesian");
     this->print_legs_status();
 
     this->node = rclcpp::Node::make_shared("movement_manager");
     this->publisher = this->node->create_publisher<rexy_msg::msg::LegList>("goal_state", 10);
     this->joystick_sub = this->node->create_subscription<std_msgs::msg::String>("joystick", 10, std::bind(&MovementManager::joystick_callback, this, _1));
     std::cout << "Ready to start ..." << std::endl;
+
+    this->wait_for_enter();
+
+    this->joystick(this->start_goal);
   }
 
   void move(const std::map<std::string, tf2::Vector3> &new_goal, int speed, std::string method)
@@ -69,8 +69,8 @@ public:
   void turn(const std::map<std::string, tf2::Vector3> &new_goal, float speed, int dir)
   {
 
-    float x_offset = 25 * dir;
-    float z_offset = 25;
+    float x_offset = this->turn_x_walk * dir;
+    float z_offset = this->turn_z_walk;
 
     this->cartesian_move({{"fr", new_goal.at("fr") + tf2::Vector3({-x_offset, 0, -z_offset})},
                           {"fl", new_goal.at("fl") + tf2::Vector3({-x_offset, 0, 0})},
@@ -99,8 +99,8 @@ public:
 
   void strate_walk(const std::map<std::string, tf2::Vector3> &new_goal, float speed, int dir)
   {
-    float x_offset = 35 * dir;
-    float z_offset = 25;
+    float x_offset = this->forward_x_walk * dir;
+    float z_offset = this->forward_z_walk;
 
     this->cartesian_move({{"fr", new_goal.at("fr") + tf2::Vector3({x_offset, 0, -z_offset})},
                           {"fl", new_goal.at("fl") + tf2::Vector3({-x_offset, 0, 0})},
@@ -186,12 +186,11 @@ public:
     std::string new_s = "s";
     std::string old_s = "s";
     this->user_shard_string = "s";
-    std::cout << "set speed: 1 - 20" << std::endl;
-    std::cin >> new_s;
+
     std::regex num("^[0-9]{1,20}$");
     std::regex opr("^[+-]?$");
 
-    int speed = std::stoi(new_s);
+    int speed = this->start_speed;
     std::cout << "start moving\n\n\tW\nA\tS\tD\n\tX\n\nchange speed - 1 - 20\n+ - body up\n- - body down\nO - exit" << std::endl;
 
     do
@@ -265,13 +264,20 @@ private:
   rexy_msg::msg::LegList rexy_status;
   std::map<std::string, LegControl> legs;
   std::array<std::string, 4> legs_name;
-  std::map<std::string, tf2::Vector3> leg_goals;
+  std::map<std::string, tf2::Vector3> start_goal;
 
   std::map<std::string, tf2::Transform> legs_transform;
   rclcpp::Publisher<rexy_msg::msg::LegList>::SharedPtr publisher;
   rclcpp::Subscription<std_msgs::msg::String>::SharedPtr joystick_sub;
 
   std::string user_shard_string;
+  int start_speed;
+
+  int forward_z_walk;
+  int forward_x_walk;
+
+  int turn_z_walk;
+  int turn_x_walk;
 
   void joystick_callback(const std_msgs::msg::String::SharedPtr msg)
   {
@@ -304,6 +310,17 @@ private:
           {gripper.second[3], gripper.second[4], gripper.second[5], gripper.second[6]}, // ori
           {gripper.second[0], gripper.second[1], gripper.second[2]});                   // pos
     }
+
+  for (auto &gripper : config["start_pos"].as<std::map<std::string, std::vector<float>>>())
+    {
+      this->start_goal[gripper.first] = tf2::Vector3({gripper.second[0], gripper.second[1], gripper.second[2]});                   // pos
+    }
+
+  this->start_speed= config["start_speed"].as<int>();
+  this->forward_z_walk= config["forward_z_walk"].as<int>();
+  this->forward_x_walk= config["forward_x_walk"].as<int>();
+  this->turn_z_walk= config["turn_z_walk"].as<int>();
+  this->turn_x_walk= config["turn_x_walk"].as<int>();
   }
 
   void open_motor_connection()
@@ -322,6 +339,11 @@ private:
       this->pca9685.reset();
       this->pca9685.setPWMFrequency(60);
     }
+  
+  for (const std::string &name : this->legs_name)
+    {
+      this->legs[name] = LegControl(this->pca9685, name);
+    }
   }
 
   void go_home()
@@ -337,18 +359,6 @@ int main(int argc, char *argv[])
 {
   rclcpp::init(argc, argv);
   MovementManager movement_manager;
-  Kinematics kin;
-  float x = -10;
-  float y = 60;
-  std::map<std::string, tf2::Vector3> start_goal({{"fr", {x, y, 150}},
-                                                  {"fl", {x, y, 150}},
-                                                  {"br", {x, y + 10, 140}},
-                                                  {"bl", {x, y + 10, 140}}});
-  movement_manager.move(start_goal, 1, "cartesian");
-
-  movement_manager.wait_for_enter();
-
-  movement_manager.joystick(start_goal);
 
   return 0;
 }

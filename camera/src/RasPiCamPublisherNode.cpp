@@ -45,7 +45,7 @@ RasPiCamPublisher::RasPiCamPublisher(rclcpp::NodeOptions options)
     int w, h, f, q;
     get_parameter_or("width", w, 320);
     get_parameter_or("height", h, 240);
-    get_parameter_or("fps", f, 90);
+    get_parameter_or("fps", f, 60);
     get_parameter_or("quality", q, 80);
 
     // std::cout << "width: " << w << std::endl;
@@ -146,7 +146,7 @@ void RasPiCamPublisher::onImageRaw(const uint8_t* start, const uint8_t* end) {
     sensor_msgs::msg::Image::UniquePtr msg(new sensor_msgs::msg::Image());
     msg->header.frame_id = "camera";
     msg->header.stamp = tnow;
-    msg->encoding = "rgb8";
+    msg->encoding = "bgr8";
     msg->data.insert(msg->data.end(), start, end);
     msg->height = camera_info.height;
     msg->width = camera_info.width;

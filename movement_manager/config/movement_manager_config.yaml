@@ -8,4 +8,18 @@ legs_transform:
   br:    [0,0,0,                     0,0,0,1]  
 
 
-test: [0,300]
+start_pos:
+            #pose: x y z         
+  bl:    [-10, 60, 140]  
+  fl:    [-10, 60, 140]  
+  fr:    [-10, 60, 140]  
+  br:    [-10, 60, 150]  
+
+start_speed: 5
+
+forward_x_walk: 35
+forward_z_walk: 35
+
+turn_x_walk: 25
+turn_z_walk: 25
+
