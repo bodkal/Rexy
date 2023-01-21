@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="CMakePresetLoader"><![CDATA[{
+  "useNewFormat": true
+}]]></component>
+  <component name="CMakeReloadState">
+    <option name="reloaded" value="true" />
+  </component>
+  <component name="CMakeRunConfigurationManager">
+    <generated />
+  </component>
+  <component name="CMakeSettings">
+    <configurations>
+      <configuration PROFILE_NAME="Debug" ENABLED="true" CONFIG_NAME="Debug" />
+    </configurations>
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="623c7cca-1bbe-4344-8d86-2486a35e754f" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/../rexy_motor_control/CMakeLists.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rexy_motor_control/config/rexy_motor_config.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rexy_motor_control/include/JHPWMDriver/LICENSE" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rexy_motor_control/include/JHPWMDriver/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rexy_motor_control/include/JHPWMDriver/documentation/PCA9685.pdf" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rexy_motor_control/include/JHPWMDriver/example/Makefile" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rexy_motor_control/include/JHPWMDriver/example/servoExample.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rexy_motor_control/include/JHPWMDriver/src/JHPWMPCA9685.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rexy_motor_control/include/JHPWMDriver/src/JHPWMPCA9685.h" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rexy_motor_control/include/ServoKit/LICENSE" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rexy_motor_control/include/ServoKit/README.md" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rexy_motor_control/include/ServoKit/images/NanoI2CWiringDiagram.jpg" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rexy_motor_control/include/ServoKit/installGamePad.sh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rexy_motor_control/include/ServoKit/installServoKit.sh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rexy_motor_control/include/ServoKit/scripts/dualshock4.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rexy_motor_control/include/ServoKit/scripts/setPermissions.sh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rexy_motor_control/include/ServoKit/servoPlay.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rexy_motor_control/package.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rexy_motor_control/script/rqt_1_0.py" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rexy_motor_control/src/motor_control.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rexy_motor_control/src/motor_control.cpp.save" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rexy_motor_control/src/motor_control.cpp.save.1" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rexy_motor_control/src/motor_control_cal.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rexy_movement_manager/CMakeLists.txt" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rexy_movement_manager/config/rexy_motor_config.yaml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rexy_movement_manager/package.xml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rexy_movement_manager/src/kinematics.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rexy_movement_manager/src/kinematics.hpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rexy_movement_manager/src/movement_manager.cpp" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rexy_movement_manager/src/movement_manager.cpp.save" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/../rexy_msg/msg/Leg.msg" beforeDir="false" afterPath="$PROJECT_DIR$/../rexy_msg/msg/Leg.msg" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="ClangdSettings">
+    <option name="formatViaClangd" value="false" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="MarkdownSettingsMigration">
+    <option name="stateVersion" value="1" />
+  </component>
+  <component name="ProjectApplicationVersion">
+    <option name="ide" value="CLion" />
+    <option name="majorVersion" value="2022" />
+    <option name="minorVersion" value="2.3" />
+  </component>
+  <component name="ProjectId" id="2GRuKxev4OIr1cDsE7EshsyCUtG" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.OpenProjectViewOnStart": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.cidr.known.project.marker": "true",
+    "WebServerToolWindowFactoryState": "false",
+    "cf.first.check.clang-format": "false",
+    "cidr.known.project.marker": "true",
+    "last_opened_file_path": "/home/picko/rexy_ws/src/movement_manager/CMakeLists.txt"
+  }
+}]]></component>
+  <component name="RunManager">
+    <configuration default="true" type="CLionExternalRunConfiguration" factoryName="Application" REDIRECT_INPUT="false" ELEVATE="false" USE_EXTERNAL_CONSOLE="false" PASS_PARENT_ENVS_2="true">
+      <method v="2">
+        <option name="CLION.EXTERNAL.BUILD" enabled="true" />
+      </method>
+    </configuration>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="623c7cca-1bbe-4344-8d86-2486a35e754f" name="Changes" comment="" />
+      <created>1666363657359</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1666363657359</updated>
+      <workItem from="1666363658457" duration="590000" />
+    </task>
+    <servers />
+  </component>
+  <component name="TypeScriptGeneratedFilesManager">
+    <option name="version" value="3" />
+  </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
+</project>
