@@ -1,0 +1,11 @@
+legs_name: [bl,fl,fr,br]
+
+legs_transform:
+            #pose: x y z         ori: x y z w
+  bl:    [0, 0, 0,                   0,0,0,1]  
+  fl:    [0, 0, 0,                   0,0,0,1]  
+  fr:    [0,0,0,                     0,0,0,1]  
+  br:    [0,0,0,                     0,0,0,1]  
+
+
+test: [0,300]
