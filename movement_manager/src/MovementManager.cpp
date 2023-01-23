@@ -37,7 +37,17 @@ public:
 
     this->joystick(this->start_goal);
   }
+  void print_goal(const std::map<std::string, tf2::Vector3> new_goal){
+   std::cout<<"===================================="<<std::endl;
+   std::cout<<"\t\tprint_goal"<<std::endl;
+   std::cout<<"===================================="<<std::endl;
 
+    for (const auto &leg: new_goal){
+      std::cout<<"name: "<<leg.first<<"[ "<<leg.second.x()<<","<<leg.second.y()<<","<<leg.second.z()<<"]"<<std::endl;
+    }
+   std::cout<<"===================================="<<std::endl;
+
+  }
   void move(const std::map<std::string, tf2::Vector3> &new_goal, int speed, std::string method)
   {
 
@@ -68,31 +78,33 @@ public:
 
     float x_offset = this->turn_x_walk * dir;
     float z_offset = this->turn_z_walk;
+    float y_offset = this->turn_y_walk;
+
     
 
     this->cartesian_move({{"fr", new_goal.at("fr") + tf2::Vector3({-x_offset, 0, -z_offset})},
                           {"fl", new_goal.at("fl") + tf2::Vector3({-x_offset, 0, 0})},
-                          {"br", new_goal.at("br") + tf2::Vector3({x_offset, 0, 0})},
-                          {"bl", new_goal.at("bl") + tf2::Vector3({x_offset, 0, -z_offset})}},
+                          {"br", new_goal.at("br") + tf2::Vector3({x_offset, -y_offset, 0})},
+                          {"bl", new_goal.at("bl") + tf2::Vector3({x_offset, -y_offset, -z_offset})}},
                          speed);
 
     this->cartesian_move({{"fr", new_goal.at("fr") + tf2::Vector3({-x_offset, 0, 0})},
                           {"fl", new_goal.at("fl") + tf2::Vector3({-x_offset, 0, 0})},
-                          {"br", new_goal.at("br") + tf2::Vector3({x_offset, 0, 0})},
-                          {"bl", new_goal.at("bl") + tf2::Vector3({x_offset, 0, 0})}},
+                          {"br", new_goal.at("br") + tf2::Vector3({x_offset, -y_offset, 0})},
+                          {"bl", new_goal.at("bl") + tf2::Vector3({x_offset, -y_offset, 0})}},
                          speed);
 
                          
     this->cartesian_move({{"fr", new_goal.at("fr") + tf2::Vector3({x_offset, 0, 0})},
                           {"fl", new_goal.at("fl") + tf2::Vector3({x_offset, 0, -z_offset})},
-                          {"br", new_goal.at("br") + tf2::Vector3({-x_offset, 0, -z_offset})},
-                          {"bl", new_goal.at("bl") + tf2::Vector3({-x_offset, 0, 0})}},
+                          {"br", new_goal.at("br") + tf2::Vector3({-x_offset, -y_offset, -z_offset})},
+                          {"bl", new_goal.at("bl") + tf2::Vector3({-x_offset, -y_offset, 0})}},
                          speed);
 
     this->cartesian_move({{"fr", new_goal.at("fr") + tf2::Vector3({x_offset, 0, 0})},
                           {"fl", new_goal.at("fl") + tf2::Vector3({x_offset, 0, 0})},
-                          {"br", new_goal.at("br") + tf2::Vector3({-x_offset, 0, 0})},
-                          {"bl", new_goal.at("bl") + tf2::Vector3({-x_offset, 0, 0})}},
+                          {"br", new_goal.at("br") + tf2::Vector3({-x_offset, -y_offset, 0})},
+                          {"bl", new_goal.at("bl") + tf2::Vector3({-x_offset, -y_offset, 0})}},
                          speed);
   }
 
@@ -102,11 +114,6 @@ public:
     float z_offset = this->forward_z_walk;
     float y_offset = this->forward_y_walk;
 
-    // this->cartesian_move({{"fr", new_goal.at("fr") + tf2::Vector3({0, 0, -z_offset})},
-    //                       {"fl", new_goal.at("fl") + tf2::Vector3({0, 0, 0})},
-    //                       {"br", new_goal.at("br") + tf2::Vector3({0, 0, 0})},
-    //                       {"bl", new_goal.at("bl") + tf2::Vector3({0, 0, -z_offset})}},
-    //                      speed);
 
     this->cartesian_move({{"fr", new_goal.at("fr") + tf2::Vector3({x_offset, 0, -z_offset})},
                           {"fl", new_goal.at("fl") + tf2::Vector3({-x_offset, 0, 0})},
@@ -119,13 +126,6 @@ public:
                           {"br", new_goal.at("br") + tf2::Vector3({-x_offset, -y_offset, 0})},
                           {"bl", new_goal.at("bl") + tf2::Vector3({x_offset, -y_offset, 0})}},
                          speed);
-
-    // this->cartesian_move({{"fr", new_goal.at("fr") + tf2::Vector3({0, 0, 0})},
-    //                       {"fl", new_goal.at("fl") + tf2::Vector3({0, 0, -z_offset})},
-    //                       {"br", new_goal.at("br") + tf2::Vector3({0, 0, -z_offset})},
-    //                       {"bl", new_goal.at("bl") + tf2::Vector3({0, 0, 0})}},
-    //                      speed);
-                         
 
     this->cartesian_move({{"fr", new_goal.at("fr") + tf2::Vector3({-x_offset, 0, 0})},
                           {"fl", new_goal.at("fl") + tf2::Vector3({x_offset, 0, -z_offset})},
@@ -228,7 +228,7 @@ public:
     std::regex opr("^[+-]?$");
 
     int speed = this->start_speed;
-    std::cout << "start moving\n\n\tW\nA\tS\tD\n\tX\n\nchange speed - 1 - 20\n+ - body up\n- - body down\nO - exit" << std::endl;
+    std::cout << "start moving\n\n\tW\nA\tS\tD\n\tX\n\nchange speed - 1 - 20\n+/-z - body up/downn\n+/-f - body forwrd/backword\nO - exit" << std::endl;
 
     do
     {
@@ -243,10 +243,18 @@ public:
         this->user_shard_string = old_s;
         new_s = old_s;
       }
-      else if ((new_s == "+") || (new_s == "-"))
+      else if ((new_s == "+z") || (new_s == "-z"))
       {
         start_goal = this->add(start_goal,  {0, 0, static_cast<float>(44-int(new_s.front()))});
-        this->move(start_goal, speed, "cartesian");
+        this->print_goal(start_goal);
+        this->move(start_goal, 1, "cartesian");
+      }
+      else if ((new_s == "+f") || (new_s == "-f"))
+      {
+                this->print_goal(start_goal);
+
+        start_goal = this->add(start_goal,  { static_cast<float>(44-int(new_s.front())),0,0});
+        this->move(start_goal, 1, "cartesian");
       }
       else if (map_input_to_move.count(new_s) )
       {
@@ -286,11 +294,11 @@ private:
   float forward_y_walk;
   float turn_z_walk;
   float turn_x_walk;
+  float turn_y_walk;
+
 
   void joystick_callback(const std_msgs::msg::String::SharedPtr msg)
   {
-    std::cout << msg->data << std::endl;
-
     this->user_shard_string = msg->data;
   }
 
@@ -332,6 +340,8 @@ private:
 
   this->turn_z_walk= config["turn_z_walk"].as<float>();
   this->turn_x_walk= config["turn_x_walk"].as<float>();
+  this->turn_y_walk= config["turn_y_walk"].as<float>();
+
   }
 
   void open_motor_connection()
