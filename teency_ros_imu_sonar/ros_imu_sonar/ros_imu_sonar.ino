@@ -7,14 +7,12 @@
 #include <rclc/rclc.h>
 #include <rclc/executor.h>
 #include <rexy_msg/msg/sonar.h>
-
 #include <sensor_msgs/msg/imu.h>
 
 // ---------------------- ros var----------------------------- 
 rcl_publisher_t publisher_imu;
 rcl_publisher_t publisher_sonar;
 
-//std_msgs__msg__Int32MultiArray msg_sonar;
 
 sensor_msgs__msg__Imu msg_imu;
 
@@ -25,7 +23,6 @@ rclc_support_t support;
 rcl_allocator_t allocator;
 
 rcl_node_t node;
-rcl_timer_t timer;
 
 #define LED_PIN 13
 #define RCCHECK(fn) { rcl_ret_t temp_rc = fn; if((temp_rc != RCL_RET_OK)){error_loop();}}
@@ -63,14 +60,6 @@ void error_loop(){
     delay(1000);
   }
 }
-
-void timer_callback(rcl_timer_t * timer, int64_t last_call_time)
-{    
-  RCSOFTCHECK(rcl_publish(&publisher_imu, &msg_imu, NULL));
-  RCSOFTCHECK(rcl_publish(&publisher_sonar, &sonar_msg, NULL));
-}
-
-
 
 // ----------------------- imu  fun---------------------------
 
@@ -112,7 +101,8 @@ void get_dis(){
     for (uint8_t i = 0; i < SONAR_NUM; i++) { // Loop through all the sensors.
     if (millis() >= pingTimer[i]) {         // Is it this sensor's time to ping?
       pingTimer[i] += PING_INTERVAL * SONAR_NUM;  // Set next time this sensor will be pinged.
-      if (i == 0 && currentSensor == SONAR_NUM - 1) oneSensorCycle(); // Sensor ping cycle complete, do something with the results.
+      if (i == 0 && currentSensor == SONAR_NUM - 1) {sonar_msg.left=mm[0]; sonar_msg.right=mm[1]; } 
+   // Sensor ping cycle complete, do something with the results.
       sonar[currentSensor].timer_stop();          // Make sure previous timer is canceled before starting a new ping (insurance).
       currentSensor = i;                          // Sensor being accessed.
       mm[currentSensor] = 0;                      // Make distance zero in case there's no ping echo for this sensor.
@@ -127,8 +117,6 @@ void echoCheck() { // If ping received, set the sensor distance to array.
 }
 
 void oneSensorCycle() { // Sensor ping cycle complete, do something with the results.
-  //msg_sonar.data.data[0]=cm[0];
-  //msg_sonar.data.data[1]=cm[1];
    sonar_msg.left=mm[0];
    sonar_msg.right=mm[1];
 
@@ -167,16 +155,16 @@ void setup() {
     ROSIDL_GET_MSG_TYPE_SUPPORT(rexy_msg, msg, Sonar),"sonar_state"));
     
   // create timer,
-  const unsigned int timer_timeout = 30;
-  RCCHECK(rclc_timer_init_default(
-    &timer,
-    &support,
-    RCL_MS_TO_NS(timer_timeout),
-    timer_callback));
+//  const unsigned int timer_timeout = 30;
+//  RCCHECK(rclc_timer_init_default(
+//    &timer,
+//    &support,
+//    RCL_MS_TO_NS(timer_timeout),
+//    timer_callback));
 
   // create executor
   RCCHECK(rclc_executor_init(&executor, &support.context, 1, &allocator));
-  RCCHECK(rclc_executor_add_timer(&executor, &timer));
+//  RCCHECK(rclc_executor_add_timer(&executor, &timer));
 
 
 // // int32_t value[2] = {0,0};
@@ -215,5 +203,7 @@ void setup() {
 
 void loop() {
   myIMU.dataAvailable();
-  RCSOFTCHECK(rclc_executor_spin_some(&executor, RCL_MS_TO_NS(30)));
+  RCSOFTCHECK(rcl_publish(&publisher_imu, &msg_imu, NULL));
+  RCSOFTCHECK(rcl_publish(&publisher_sonar, &sonar_msg, NULL));
+  RCSOFTCHECK(rclc_executor_spin_some(&executor, RCL_MS_TO_NS(50)));
 }
