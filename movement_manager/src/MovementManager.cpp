@@ -115,10 +115,35 @@ public:
     float y_offset = this->forward_y_walk;
 
 
+// this->cartesian_move({{"fr", new_goal.at("fr") + tf2::Vector3({0, 0, -z_offset})},
+//                           {"fl", new_goal.at("fl") + tf2::Vector3({-0, 0, 0})},
+//                           {"br", new_goal.at("br") + tf2::Vector3({-0, -y_offset, 0})},
+//                           {"bl", new_goal.at("bl") + tf2::Vector3({0, -y_offset, -z_offset})}},
+//                          speed);
+
+//     this->cartesian_move({{"fr", new_goal.at("fr") + tf2::Vector3({x_offset, 0, 0})},
+//                           {"fl", new_goal.at("fl") + tf2::Vector3({-x_offset, 0, 0})},
+//                           {"br", new_goal.at("br") + tf2::Vector3({-x_offset, -y_offset, 0})},
+//                           {"bl", new_goal.at("bl") + tf2::Vector3({x_offset, -y_offset, 0})}},
+//                          speed);
+
+//     this->cartesian_move({{"fr", new_goal.at("fr") + tf2::Vector3({-0, 0, 0})},
+//                           {"fl", new_goal.at("fl") + tf2::Vector3({0, 0, -z_offset})},
+//                           {"br", new_goal.at("br") + tf2::Vector3({0, -y_offset, -z_offset})},
+//                           {"bl", new_goal.at("bl") + tf2::Vector3({-0, -y_offset, 0})}},
+//                          speed);
+
+//     this->cartesian_move({{"fr", new_goal.at("fr") + tf2::Vector3({-x_offset, 0, 0})},
+//                           {"fl", new_goal.at("fl") + tf2::Vector3({x_offset, 0, 0})},
+//                           {"br", new_goal.at("br") + tf2::Vector3({x_offset, -y_offset, 0})},
+//                           {"bl", new_goal.at("bl") + tf2::Vector3({-x_offset, -y_offset, 0})}},
+//                          speed);
+
+
     this->cartesian_move({{"fr", new_goal.at("fr") + tf2::Vector3({x_offset, 0, -z_offset})},
                           {"fl", new_goal.at("fl") + tf2::Vector3({-x_offset, 0, 0})},
                           {"br", new_goal.at("br") + tf2::Vector3({-x_offset, -y_offset, 0})},
-                          {"bl", new_goal.at("bl") + tf2::Vector3({x_offset, -y_offset, -z_offset})}},
+                          {"bl", new_goal.at("bl") + tf2::Vector3({x_offset, -y_offset, -z_offset*1.5})}},
                          speed);
 
     this->cartesian_move({{"fr", new_goal.at("fr") + tf2::Vector3({x_offset, 0, 0})},
@@ -129,7 +154,7 @@ public:
 
     this->cartesian_move({{"fr", new_goal.at("fr") + tf2::Vector3({-x_offset, 0, 0})},
                           {"fl", new_goal.at("fl") + tf2::Vector3({x_offset, 0, -z_offset})},
-                          {"br", new_goal.at("br") + tf2::Vector3({x_offset, -y_offset, -z_offset})},
+                          {"br", new_goal.at("br") + tf2::Vector3({x_offset, -y_offset, -z_offset*1.5})},
                           {"bl", new_goal.at("bl") + tf2::Vector3({-x_offset, -y_offset, 0})}},
                          speed);
 
