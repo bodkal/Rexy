@@ -54,7 +54,7 @@ public:
     }
     if (method == "backward")
     {
-      this->strate_walk(new_goal, speed, -1);
+      this->(new_goal, speed, -1);
     }
     if (method == "turn_left")
     {
@@ -71,6 +71,12 @@ public:
 
     float x_offset = this->turn_x_walk * dir;
     float z_offset = this->turn_z_walk;
+    
+    this->cartesian_move({{"fr", new_goal.at("fr") + tf2::Vector3({0, 0, -z_offset})},
+                          {"fl", new_goal.at("fl") + tf2::Vector3({0, 0, 0})},
+                          {"br", new_goal.at("br") + tf2::Vector3({0, 0, 0})},
+                          {"bl", new_goal.at("bl") + tf2::Vector3({0, 0, -z_offset})}},
+                         speed);
 
     this->cartesian_move({{"fr", new_goal.at("fr") + tf2::Vector3({-x_offset, 0, -z_offset})},
                           {"fl", new_goal.at("fl") + tf2::Vector3({-x_offset, 0, 0})},
@@ -84,6 +90,12 @@ public:
                           {"bl", new_goal.at("bl") + tf2::Vector3({x_offset, 0, 0})}},
                          speed);
 
+    this->cartesian_move({{"fr", new_goal.at("fr") + tf2::Vector3({0, 0, 0})},
+                          {"fl", new_goal.at("fl") + tf2::Vector3({0, 0, -z_offset})},
+                          {"br", new_goal.at("br") + tf2::Vector3({0, 0, -z_offset})},
+                          {"bl", new_goal.at("bl") + tf2::Vector3({0, 0, 0})}},
+                         speed);
+                         
     this->cartesian_move({{"fr", new_goal.at("fr") + tf2::Vector3({x_offset, 0, 0})},
                           {"fl", new_goal.at("fl") + tf2::Vector3({x_offset, 0, -z_offset})},
                           {"br", new_goal.at("br") + tf2::Vector3({-x_offset, 0, -z_offset})},
