@@ -9,6 +9,11 @@ from geometry_msgs.msg import TransformStamped
 from tf2_ros import TransformBroadcaster
 from tf2_ros.static_transform_broadcaster import StaticTransformBroadcaster
 
+import matplotlib.pyplot as plt
+import numpy as np
+
+
+
 class Visualizer(Node):
 
     def __init__(self):
