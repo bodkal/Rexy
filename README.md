@@ -27,4 +27,4 @@ https://chuckmails.medium.com/enable-pi-camera-with-raspberry-pi4-ubuntu-20-10-3
 
 **opencv install**
 
-https://gist.github.com/raulqf/f42c718a658cddc16f9df07ecc627be7
+https://www.geeksforgeeks.org/how-to-install-opencv-in-c-on-linux/
