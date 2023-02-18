@@ -2,6 +2,8 @@
 #include <functional>
 #include <memory>
 #include <string>
+#include <fstream>
+#include <iostream>
 
 #include "rclcpp/rclcpp.hpp"
 #include "std_msgs/msg/string.hpp"
@@ -20,14 +22,18 @@ class Joystick : public rclcpp::Node
         std_msgs::msg::String s;
         while (rclcpp::ok())
         {
+        
+        std::ifstream input_file("/dev/tty");
+
         std::cout<<"Enter key to send to rexy: "<<std::endl;
-        std::cin>>s.data;
+        input_file >> s.data;
         publisher_->publish(s);
         }
         
     }
   private:
     rclcpp::Publisher<std_msgs::msg::String>::SharedPtr publisher_;
+
 };
 
 int main(int argc, char * argv[])

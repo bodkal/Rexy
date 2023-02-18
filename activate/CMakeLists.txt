@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(joystick)
+project(activate)
 
 # Default to C99
 if(NOT CMAKE_C_STANDARD)
@@ -17,16 +17,15 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
-find_package(rclcpp REQUIRED)
-find_package(std_msgs REQUIRED)
+# uncomment the following section in order to fill in
+# further dependencies manually.
+# find_package(<dependency> REQUIRED)
 
-
-add_executable(joystick src/Joystick.cpp)
-ament_target_dependencies(joystick rclcpp std_msgs)
-
-install(TARGETS
-joystick
-  DESTINATION lib/${PROJECT_NAME})
+# Install launch files.
+install(DIRECTORY
+  launch
+  DESTINATION share/${PROJECT_NAME}/
+)
 
 
 if(BUILD_TESTING)
