@@ -45,7 +45,7 @@ RasPiCamPublisher::RasPiCamPublisher(rclcpp::NodeOptions options)
     int w, h, f, q;
     get_parameter_or("width", w, 320);
     get_parameter_or("height", h, 240);
-    get_parameter_or("fps", f, 60);
+    get_parameter_or("fps", f, 30);
     get_parameter_or("quality", q, 80);
 
     // std::cout << "width: " << w << std::endl;
