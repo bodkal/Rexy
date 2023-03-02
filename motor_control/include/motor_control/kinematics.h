@@ -4,6 +4,7 @@
 #include "rexy_msg/msg/leg.hpp"
 #include <tf2/LinearMath/Vector3.h>
 
+#include <iostream>
 
 
 class Kinematics{
@@ -42,6 +43,7 @@ public:
         theta2=90-this->rad_2_deg(theta2);
         theta3=this->rad_2_deg(theta3);
 
+       // std::cout<<theta1<<", "<<theta2<<", "<<theta3<<std::endl;
         return {theta1,theta2,theta3};
     }
     Kinematics():l1(60),l2(105),l3(135) {  }
