@@ -2,14 +2,12 @@
 #include "rexy_msg/msg/leg.hpp"
 #include "rexy_msg/msg/leg_list.hpp"
 #include "std_msgs/msg/string.hpp"
-
 #include <motor_control/kinematics.h>
-
 #include "yaml-cpp/yaml.h"
 #include <motor_control/LegControl.h>
 #include <tf2/LinearMath/Transform.h>
 #include <tf2/LinearMath/Vector3.h>
-
+#include <movement_manager/StabilityControl.h>
 #include <string>
 #include <iostream>
 #include <regex>
@@ -20,7 +18,9 @@ using std::placeholders::_1;
 class MovementManager
 {
 public:
-  MovementManager()
+  MovementManager():node(rclcpp::Node::make_shared("movement_manager")),
+                    stability_control(this->node)
+                    
   {
 
     this->read_config();
@@ -30,7 +30,7 @@ public:
     // this->move(this->start_goal, 3,"cartesian");
     // this->print_legs_status();
 
-    this->node = rclcpp::Node::make_shared("movement_manager");
+
     this->publisher = this->node->create_publisher<rexy_msg::msg::LegList>("goal_state", 10);
     this->joystick_sub = this->node->create_subscription<std_msgs::msg::String>("joystick", 10, std::bind(&MovementManager::joystick_callback, this, _1));
     std::cout << "Ready to start ..." << std::endl;
@@ -105,10 +105,10 @@ public:
     float y_offset = this->forward_y_walk;
 
     std::vector<int> order({0,1,2,3});
-    std::vector<tf2::Vector3> fas_start({{-x_offset-20, 0, -z_offset},
+    std::vector<tf2::Vector3> fas_start({{-x_offset-30, 0, -z_offset-10},
                                          {-x_offset ,   0, 0},
                                          {-x_offset ,   0, 0},
-                                         {-x_offset-20, 0, -z_offset}});
+                                         {-x_offset-30, 0, -z_offset-10}});
 
     std::vector<tf2::Vector3> fas_mid({{x_offset,  0, -z_offset},
                                        {-x_offset, 0, 0},
@@ -167,6 +167,8 @@ public:
     //   }
     //   this->legs.at(name).set_new_state(start.at(name));
     // }
+
+
     for (const std::string &name : this->legs_name)
     {
       start[name] = this->legs[name].get_pos();
@@ -283,6 +285,7 @@ public:
 private:
   std::shared_ptr<rclcpp::Node> node;
   PCA9685 pca9685;
+  StabilityControl stability_control;
   rexy_msg::msg::LegList rexy_status;
   std::map<std::string, LegControl> legs;
   std::array<std::string, 4> legs_name;
