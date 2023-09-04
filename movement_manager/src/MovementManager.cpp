@@ -18,9 +18,9 @@ using std::placeholders::_1;
 class MovementManager
 {
 public:
-  MovementManager():node(rclcpp::Node::make_shared("movement_manager")),
-                    stability_control(this->node)
-                    
+  MovementManager() : node(rclcpp::Node::make_shared("movement_manager")),
+                      stability_control(this->node)
+
   {
 
     this->read_config();
@@ -29,7 +29,6 @@ public:
     this->go_home();
     // this->move(this->start_goal, 3,"cartesian");
     // this->print_legs_status();
-
 
     this->publisher = this->node->create_publisher<rexy_msg::msg::LegList>("goal_state", 10);
     this->joystick_sub = this->node->create_subscription<std_msgs::msg::String>("joystick", 10, std::bind(&MovementManager::joystick_callback, this, _1));
@@ -104,44 +103,30 @@ public:
     float z_offset = this->forward_z_walk;
     float y_offset = this->forward_y_walk;
 
-    std::vector<int> order({0,1,2,3});
-    std::vector<tf2::Vector3> fas_start({{-x_offset-30, 0, -z_offset-10},
-                                         {-x_offset ,   0, 0},
-                                         {-x_offset ,   0, 0},
-                                         {-x_offset-30, 0, -z_offset-10}});
-
-    std::vector<tf2::Vector3> fas_mid({{x_offset,  0, -z_offset},
-                                       {-x_offset, 0, 0},
-                                       {-x_offset, 0, 0},
-                                       {x_offset,  0, -z_offset}});
-
-    std::vector<tf2::Vector3> fas_end({{x_offset,    0, 0},
-                                       {-x_offset ,  0, 0},
-                                       {-x_offset ,  0, 0},
-                                       {x_offset,    0, 0}});
-
-
-    std::cout << "stap: " << (this->w_counter) % 4 << std::endl;
-    this->cartesian_move({{"fr", new_goal.at("fr") + fas_start[(order[0] + this->w_counter) % 4]},
-                          {"fl", new_goal.at("fl") + fas_start[(order[1] + this->w_counter) % 4]},
-                          {"br", new_goal.at("br") + fas_start[(order[2] + this->w_counter) % 4]},
-                          {"bl", new_goal.at("bl") + fas_start[(order[3] + this->w_counter) % 4]}},
+    this->cartesian_move({{"fr", new_goal.at("fr") + tf2::Vector3({x_offset, 0, -z_offset - 10})},
+                          {"fl", new_goal.at("fl") + tf2::Vector3({-x_offset, 0, 0})},
+                          {"br", new_goal.at("br") + tf2::Vector3({-x_offset, -y_offset, 0})},
+                          {"bl", new_goal.at("bl") + tf2::Vector3({x_offset, -y_offset, -z_offset - 10})}},
                          speed);
 
-
-    this->cartesian_move({{"fr", new_goal.at("fr") + fas_mid[(order[0] + this->w_counter) % 4]},
-                          {"fl", new_goal.at("fl") + fas_mid[(order[1] + this->w_counter) % 4]},
-                          {"br", new_goal.at("br") + fas_mid[(order[2] + this->w_counter) % 4]},
-                          {"bl", new_goal.at("bl") + fas_mid[(order[3] + this->w_counter) % 4]}},
+    this->cartesian_move({{"fr", new_goal.at("fr") + tf2::Vector3({x_offset, 0, 0})},
+                          {"fl", new_goal.at("fl") + tf2::Vector3({-x_offset, 0, 0})},
+                          {"br", new_goal.at("br") + tf2::Vector3({-x_offset, -y_offset, 0})},
+                          {"bl", new_goal.at("bl") + tf2::Vector3({x_offset, -y_offset, 0})}},
                          speed);
 
-    this->cartesian_move({{"fr", new_goal.at("fr") + fas_end[(order[0] + this->w_counter) % 4]},
-                          {"fl", new_goal.at("fl") + fas_end[(order[1] + this->w_counter) % 4]},
-                          {"br", new_goal.at("br") + fas_end[(order[2] + this->w_counter) % 4]},
-                          {"bl", new_goal.at("bl") + fas_end[(order[3] + this->w_counter) % 4]}},
+    this->cartesian_move({{"fr", new_goal.at("fr") + tf2::Vector3({-x_offset, 0, 0})},
+                          {"fl", new_goal.at("fl") + tf2::Vector3({x_offset, 0, -z_offset})},
+                          {"br", new_goal.at("br") + tf2::Vector3({x_offset, -y_offset, -z_offset})},
+                          {"bl", new_goal.at("bl") + tf2::Vector3({-x_offset, -y_offset, 0})}},
                          speed);
 
-    this->w_counter += 2;
+    this->cartesian_move({{"fr", new_goal.at("fr") + tf2::Vector3({-x_offset, 0, 0})},
+                          {"fl", new_goal.at("fl") + tf2::Vector3({x_offset, 0, 0})},
+                          {"br", new_goal.at("br") + tf2::Vector3({x_offset, -y_offset, 0})},
+                          {"bl", new_goal.at("bl") + tf2::Vector3({-x_offset, -y_offset, 0})}},
+                         speed);
+
   }
 
   void cartesian_move(const std::map<std::string, tf2::Vector3> &new_goal, int speed)
@@ -153,43 +138,33 @@ public:
     std::map<std::string, int> max_error;
     int legs_max_error = 0;
 
-    // for (const std::string &name : this->legs_name)
-    // {
-    //   start[name] = this->legs[name].get_pos();
-    //   error = (new_goal.at(name) - start.at(name)).absolute();
-    //   max_error[name] = int(error[error.maxAxis()]);
-
-    //   delta[name] = ((new_goal.at(name) - start.at(name)) / max_error.at(name));
-
-    //   if (legs_max_error < max_error.at(name))
-    //   {
-    //     legs_max_error = max_error.at(name);
-    //   }
-    //   this->legs.at(name).set_new_state(start.at(name));
-    // }
-
-
     for (const std::string &name : this->legs_name)
     {
       start[name] = this->legs[name].get_pos();
-      delta[name] = ((new_goal.at(name) - start.at(name)) / speed);
+      error = (new_goal.at(name) - start.at(name)).absolute();
+      max_error[name] = int(error[error.maxAxis()]);
+
+      delta[name] = ((new_goal.at(name) - start.at(name)) / max_error.at(name));
+
+      if (legs_max_error < max_error.at(name))
+      {
+        legs_max_error = max_error.at(name);
+      }
+      this->legs.at(name).set_new_state(start.at(name));
     }
 
-    rclcpp::Rate rate(10);
+    rclcpp::Rate rate(100);
 
-    for (int i = 1; i < speed + 1; ++i /* += speed*/)
+    for (int i = 0; i < legs_max_error; i += speed)
     {
 
       for (const std::string &name : this->legs_name)
       {
-        this->legs.at(name).set_new_state(start.at(name) + delta[name] * i);
-
-        // if ((max_error.at(name) > 0) & (i <= max_error.at(name)))
-        // {
-        //   this->legs.at(name).set_new_state(start.at(name) + i * delta.at(name));
-        // }
+        if ((max_error.at(name) > 0) & (i <= max_error.at(name)))
+        {
+          this->legs.at(name).set_new_state(start.at(name) + i * delta.at(name));
+        }
       }
-      //  this->print_legs_status();
       rate.sleep();
     }
   }
