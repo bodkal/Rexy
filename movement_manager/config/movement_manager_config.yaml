@@ -9,16 +9,16 @@ legs_transform:
 
 start_pos:
   #pose:    x   y    z         
-  bl:    [10, 60, 135]  
+  bl:    [10, 60, 130]  
   fl:    [10, 60, 130]  
   fr:    [10, 60, 130]  
-  br:    [10, 60, 135]  
+  br:    [10, 60, 130]  
 
 start_speed: 7
 
 forward_x_walk: 40
 forward_z_walk: 30
-forward_y_walk: 10
+forward_y_walk: 0
 
 turn_x_walk: 35
 turn_z_walk: 30
